@@ -1,0 +1,30 @@
+databaseChangeLog:
+  - logicalFilePath: db.changelog/db.changelog-master.yaml
+  - changeSet:
+      id: 1
+      author: eaa
+      changes:
+      - createTable:
+          columns:
+            - column:
+                name: id
+                type: integer
+            - column:
+                name: firstName
+                type: varchar(50)
+            - column:
+                name: lastName
+                type: varchar(50)
+            - column:
+                name: email
+                type: varchar(50)
+            - column:
+                name: password
+                type: varchar(50)
+            - column:
+                name: createdAt
+                type: date
+          remarks: A String
+          schemaName: public
+          tableName: users
+          tablespace: Users table space
