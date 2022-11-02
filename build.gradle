@@ -45,7 +45,8 @@ dependencies {
 			'com.rollbar:rollbar-spring-boot-webmvc:1.8.1',
 			// https://mvnrepository.com/artifact/org.liquibase/liquibase-core
 			'org.liquibase:liquibase-core:4.17.1',
-			'com.h2database:h2:2.1.214'
+			'com.h2database:h2:2.1.214',
+			'org.springframework.boot:spring-boot-starter-security'
 	)
 
 	runtimeOnly (
