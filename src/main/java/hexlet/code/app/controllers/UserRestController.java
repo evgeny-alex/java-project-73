@@ -2,12 +2,15 @@ package hexlet.code.app.controllers;
 
 import hexlet.code.app.dto.UserRequestDto;
 import hexlet.code.app.dto.UserResponseDto;
+import hexlet.code.app.model.User;
 import hexlet.code.app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequestMapping("/users")
 public class UserRestController {
@@ -15,31 +18,55 @@ public class UserRestController {
     @Autowired
     private UserService userService;
 
-    // TODO: 02.11.2022 Реализовать остальные методы в сервисе
-
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody UserRequestDto userDto) {
-        String id = userService.createUser(userDto);
+        Integer id = userService.createUser(userDto);
         return ResponseEntity.ok("User successfully created with id = " + id);
     }
 
     @GetMapping
     public ResponseEntity<UserResponseDto> getUser(@PathVariable("id") String id) {
-        return ResponseEntity.ok(new UserResponseDto());
+        User user = userService.getUserById(Integer.getInteger(id));
+        if (user != null) {
+            UserResponseDto userResponseDto = new UserResponseDto();
+
+            userResponseDto.setId(user.getId());
+            userResponseDto.setEmail(user.getEmail());
+            userResponseDto.setFirstName(user.getFirstName());
+            userResponseDto.setLastName(user.getLastName());
+            userResponseDto.setCreatedAt(user.getCreatedAt());
+
+            return ResponseEntity.ok(userResponseDto);
+        }
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAllUser() {
-        return ResponseEntity.ok(List.of(new UserResponseDto()));
+        List<User> userList = userService.getAllUserList();
+        List<UserResponseDto> userResponseDtoList = userList.stream().map(user -> {
+            UserResponseDto userResponseDto = new UserResponseDto();
+
+            userResponseDto.setId(user.getId());
+            userResponseDto.setEmail(user.getEmail());
+            userResponseDto.setFirstName(user.getFirstName());
+            userResponseDto.setLastName(user.getLastName());
+            userResponseDto.setCreatedAt(user.getCreatedAt());
+
+            return userResponseDto;
+        }).toList();
+        return ResponseEntity.ok(userResponseDtoList);
     }
 
     @PutMapping
     public ResponseEntity<String> updateUser(@RequestBody UserRequestDto userDto, @PathVariable("id") String id) {
+        userService.updateUser(userDto, Integer.getInteger(id));
         return ResponseEntity.ok("User successfully updated");
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteUser(@PathVariable("id") String id) {
+        userService.deleteUser(Integer.getInteger(id));
         return ResponseEntity.ok("User successfully deleted");
     }
 }
