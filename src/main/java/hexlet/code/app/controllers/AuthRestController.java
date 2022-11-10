@@ -1,20 +1,24 @@
 package hexlet.code.app.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.app.dto.LoginRequestDto;
 import hexlet.code.app.dto.UserRequestDto;
+import hexlet.code.app.model.User;
 import hexlet.code.app.services.UserService;
+import hexlet.code.app.utils.JwtTokenUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
 
 @RestController
 @RequestMapping("/auth")
@@ -26,20 +30,33 @@ public class AuthRestController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequestDto.getEmail(), loginRequestDto.getPassword()));
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("invalid username/password");
+            Authentication authenticate = authenticationManager
+                    .authenticate(
+                            new UsernamePasswordAuthenticationToken(
+                                    loginRequestDto.getEmail(), loginRequestDto.getPassword()
+                            )
+                    );
+
+            User user = (User) authenticate.getPrincipal();
+
+            return ResponseEntity.ok().body(jwtTokenUtil.generateToken(user));
+        } catch (BadCredentialsException ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
-        // TODO: 07.11.2022 Сгенерировать Jwt токен с помощью библиотеки + создать JwtFilter, чтобы по username фильтровал запросы
-        return ResponseEntity.ok("");
     }
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRequestDto userRequestDto) {
         userService.createUser(userRequestDto);
-        return ResponseEntity.ok("");
+        return ResponseEntity.ok("OK");
     }
 }
