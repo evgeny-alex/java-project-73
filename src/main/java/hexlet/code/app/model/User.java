@@ -1,12 +1,15 @@
 package hexlet.code.app.model;
 
 import lombok.Data;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import java.util.Collection;
 import java.util.Date;
+
+import static javax.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Data
@@ -18,10 +21,10 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @Column(name = "firstName")
+    @Column(name = "first_name")
     private String firstName;
 
-    @Column(name = "lastName")
+    @Column(name = "last_name")
     private String lastName;
 
     @Column(name = "email")
@@ -30,7 +33,9 @@ public class User implements UserDetails {
     @Column(name = "password")
     private String password;
 
-    @Column(name = "createdAt")
+    @CreationTimestamp
+    @Temporal(TIMESTAMP)
+    @Column(name = "created_at")
     private Date createdAt;
 
     @Override

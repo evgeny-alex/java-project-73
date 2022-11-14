@@ -6,15 +6,14 @@ import hexlet.code.app.model.User;
 import hexlet.code.app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 
-@Controller("/users")
+@RestController
+@RequestMapping("/api/users")
 public class UserRestController {
 
     @Autowired
@@ -26,7 +25,7 @@ public class UserRestController {
         return ResponseEntity.ok("User successfully created with id = " + id);
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable("id") String id) {
         User user = userService.getUserById(Integer.getInteger(id));
         if (user != null) {
@@ -43,7 +42,9 @@ public class UserRestController {
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
+    // TODO: 14.11.2022 Исправить запросы фронта
+
+    @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAllUser() {
         List<User> userList = userService.getAllUserList();
         List<UserResponseDto> userResponseDtoList = userList.stream().map(user -> {

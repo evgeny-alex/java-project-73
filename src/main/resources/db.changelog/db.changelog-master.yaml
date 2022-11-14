@@ -1,7 +1,7 @@
 databaseChangeLog:
   - logicalFilePath: db.changelog/db.changelog-master.yaml
   - changeSet:
-      id: 1
+      id: 3
       author: eaa
       changes:
       - createTable:
@@ -10,10 +10,10 @@ databaseChangeLog:
                 name: id
                 type: integer
             - column:
-                name: firstName
+                name: first_name
                 type: varchar(50)
             - column:
-                name: lastName
+                name: last_name
                 type: varchar(50)
             - column:
                 name: email
@@ -22,7 +22,7 @@ databaseChangeLog:
                 name: password
                 type: varchar(50)
             - column:
-                name: createdAt
+                name: created_at
                 type: date
           remarks: A String
           schemaName: public
