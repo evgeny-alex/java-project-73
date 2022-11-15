@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 public class AuthRestController {
 
     @Autowired
@@ -51,6 +51,8 @@ public class AuthRestController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
+
+    // TODO: 15.11.2022 Разобраться с логином
 
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRequestDto userRequestDto) {
