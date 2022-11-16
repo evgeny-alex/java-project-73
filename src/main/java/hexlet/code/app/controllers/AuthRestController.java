@@ -52,8 +52,6 @@ public class AuthRestController {
         }
     }
 
-    // TODO: 15.11.2022 Разобраться с логином
-
     @PostMapping("/register")
     public ResponseEntity<String> register(@RequestBody UserRequestDto userRequestDto) {
         userService.createUser(userRequestDto);

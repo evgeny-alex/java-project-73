@@ -1,6 +1,5 @@
 package hexlet.code.app.config;
 
-import hexlet.code.app.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,6 +26,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .disable()
                 .authorizeRequests()
                 .antMatchers("/api/auth/").permitAll()
+                .antMatchers("/api/login/").permitAll()
                 .antMatchers("/users/").permitAll()
                 .and().exceptionHandling()
                 .and().sessionManagement()
