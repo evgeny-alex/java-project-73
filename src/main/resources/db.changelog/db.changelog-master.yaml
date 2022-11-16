@@ -25,7 +25,7 @@ databaseChangeLog:
                   type: varchar(255)
               - column:
                   name: created_at
-                  type: date
+                  type: timestamp
             remarks: A String
             schemaName: public
             tableName: users

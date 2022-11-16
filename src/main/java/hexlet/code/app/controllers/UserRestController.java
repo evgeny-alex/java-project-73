@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/api/users")
 public class UserRestController {
@@ -41,8 +40,6 @@ public class UserRestController {
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
-
-    // TODO: 14.11.2022 Исправить запросы фронта
 
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAllUser() {
