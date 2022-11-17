@@ -1,15 +1,15 @@
 package hexlet.code.app.controllers;
 
+import hexlet.code.app.dto.TaskStatusRequestDto;
+import hexlet.code.app.dto.TaskStatusResponseDto;
+import hexlet.code.app.dto.UserRequestDto;
 import hexlet.code.app.dto.UserResponseDto;
-import hexlet.code.app.model.User;
+import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.services.TaskStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -20,41 +20,52 @@ public class TaskStatusRestController {
     @Autowired
     private TaskStatusService taskStatusService;
 
-    // TODO: 16.11.2022 Доделать контроллер и сервис статсусов задач
-
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponseDto> getStatus(@PathVariable("id") String id) {
-//        User user = userService.getUserById(Integer.getInteger(id));
-//        if (user != null) {
-//            UserResponseDto userResponseDto = new UserResponseDto();
-//
-//            userResponseDto.setId(user.getId());
-//            userResponseDto.setEmail(user.getEmail());
-//            userResponseDto.setFirstName(user.getFirstName());
-//            userResponseDto.setLastName(user.getLastName());
-//            userResponseDto.setCreatedAt(user.getCreatedAt());
-//
-//            return ResponseEntity.ok(userResponseDto);
-//        }
+    public ResponseEntity<TaskStatusResponseDto> getStatus(@PathVariable("id") String id) {
+        TaskStatus taskStatus = taskStatusService.getTaskStatusById(Integer.getInteger(id));
+        if (taskStatus != null) {
+            TaskStatusResponseDto taskStatusResponseDto = new TaskStatusResponseDto();
+
+            taskStatusResponseDto.setId(taskStatus.getId());
+            taskStatusResponseDto.setName(taskStatus.getName());
+            taskStatusResponseDto.setCreatedAt(taskStatus.getCreatedAt());
+
+            return ResponseEntity.ok(taskStatusResponseDto);
+        }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 
     @GetMapping
-    public ResponseEntity<List<UserResponseDto>> getAllStatus() {
-//        List<User> userList = userService.getAllUserList();
-//        List<UserResponseDto> userResponseDtoList = userList.stream().map(user -> {
-//            UserResponseDto userResponseDto = new UserResponseDto();
-//
-//            userResponseDto.setId(user.getId());
-//            userResponseDto.setEmail(user.getEmail());
-//            userResponseDto.setFirstName(user.getFirstName());
-//            userResponseDto.setLastName(user.getLastName());
-//            userResponseDto.setCreatedAt(user.getCreatedAt());
-//
-//            return userResponseDto;
-//        }).toList();
-//        return ResponseEntity.ok(userResponseDtoList);
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    public ResponseEntity<List<TaskStatusResponseDto>> getAllStatus() {
+        List<TaskStatus> taskStatusList = taskStatusService.getAllTaskStatusList();
+        List<TaskStatusResponseDto> taskStatusResponseDtoList = taskStatusList.stream().map(taskStatus -> {
+            TaskStatusResponseDto taskStatusResponseDto = new TaskStatusResponseDto();
+
+            taskStatusResponseDto.setId(taskStatus.getId());
+            taskStatusResponseDto.setName(taskStatus.getName());
+            taskStatusResponseDto.setCreatedAt(taskStatus.getCreatedAt());
+
+            return taskStatusResponseDto;
+        }).toList();
+        return ResponseEntity.ok(taskStatusResponseDtoList);
+    }
+
+    @PostMapping
+    public ResponseEntity<String> createTaskStatus(@RequestBody TaskStatusRequestDto taskStatusRequestDto) {
+        Integer id = taskStatusService.createTaskStatus(taskStatusRequestDto);
+        return ResponseEntity.ok("Task status successfully created with id = " + id);
+    }
+
+    @PutMapping
+    public ResponseEntity<String> updateTaskStatus(@RequestBody TaskStatusRequestDto taskStatusRequestDto, @PathVariable("id") String id) {
+        taskStatusService.updateTaskStatus(taskStatusRequestDto, Integer.getInteger(id));
+        return ResponseEntity.ok("Task status successfully updated");
+    }
+
+    @DeleteMapping
+    public ResponseEntity<String> deleteTaskStatus(@PathVariable("id") String id) {
+        taskStatusService.deleteTaskStatus(Integer.getInteger(id));
+        return ResponseEntity.ok("Task status successfully deleted");
     }
 
 }
