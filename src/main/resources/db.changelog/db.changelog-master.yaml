@@ -1,7 +1,7 @@
 databaseChangeLog:
   - logicalFilePath: db.changelog/db.changelog-master.yaml
   - changeSet:
-      id: 1
+      id: createTable-Users
       author: eaa
       changes:
         - createTable:
@@ -31,7 +31,7 @@ databaseChangeLog:
             tableName: users
             tablespace: Users table space
   - changeSet:
-      id: addPrimaryKey
+      id: addPrimaryKey-Users
       author: eaa
       changes:
         - addPrimaryKey:
@@ -56,3 +56,111 @@ databaseChangeLog:
             schemaName: public
             sequenceName: HIBERNATE_SEQUENCE
             startValue: 1
+  - changeSet:
+      id: createTable-TaskStatuses
+      author: eaa
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+              - column:
+                  name: created_at
+                  type: timestamp
+            remarks: A String
+            schemaName: public
+            tableName: taskstatuses
+            tablespace: Task statuses table space
+  - changeSet:
+      id: createTable-Tasks
+      author: eaa
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: description
+                  type: varchar(255)
+              - column:
+                  name: task_status
+                  type: integer
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: author
+                  type: integer
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: executor
+                  type: integer
+              - column:
+                  name: created_at
+                  type: timestamp
+            remarks: A String
+            schemaName: public
+            tableName: tasks
+            tablespace: Task statuses table space
+  - changeSet:
+      id: addForeignKeyConstraint-TaskTaskStatus
+      author: eaa
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: task_status
+            baseTableName: tasks
+            baseTableSchemaName: public
+            constraintName: fk_tasks_taskstatuses
+            deferrable: true
+            initiallyDeferred: true
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: taskstatuses
+            referencedTableSchemaName: public
+            validate: true
+  - changeSet:
+      id: addForeignKeyConstraint-TaskAuthor
+      author: eaa
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: author
+            baseTableName: tasks
+            baseTableSchemaName: public
+            constraintName: fk_tasks_author
+            deferrable: true
+            initiallyDeferred: true
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: users
+            referencedTableSchemaName: public
+            validate: true
+  - changeSet:
+      id: addForeignKeyConstraint-TaskExecutor
+      author: eaa
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: executor
+            baseTableName: tasks
+            baseTableSchemaName: public
+            constraintName: fk_tasks_executor
+            deferrable: true
+            initiallyDeferred: true
+            onUpdate: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: users
+            referencedTableSchemaName: public
+            validate: true
