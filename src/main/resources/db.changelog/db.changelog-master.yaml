@@ -78,6 +78,17 @@ databaseChangeLog:
             tableName: taskstatuses
             tablespace: Task statuses table space
   - changeSet:
+      id: addPrimaryKey-TaskStatuses
+      author: eaa
+      changes:
+        - addPrimaryKey:
+            columnNames: id
+            constraintName: pk_taskstatuses
+            schemaName: public
+            tableName: taskstatuses
+            tablespace: Users table space
+            validate: true
+  - changeSet:
       id: createTable-Tasks
       author: eaa
       changes:
@@ -117,6 +128,17 @@ databaseChangeLog:
             tableName: tasks
             tablespace: Task statuses table space
   - changeSet:
+      id: addPrimaryKey-Tasks
+      author: eaa
+      changes:
+        - addPrimaryKey:
+            columnNames: id
+            constraintName: pk_tasks
+            schemaName: public
+            tableName: tasks
+            tablespace: Users table space
+            validate: true
+  - changeSet:
       id: addForeignKeyConstraint-TaskTaskStatus
       author: eaa
       changes:
@@ -125,13 +147,10 @@ databaseChangeLog:
             baseTableName: tasks
             baseTableSchemaName: public
             constraintName: fk_tasks_taskstatuses
-            deferrable: true
-            initiallyDeferred: true
             onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: taskstatuses
             referencedTableSchemaName: public
-            validate: true
   - changeSet:
       id: addForeignKeyConstraint-TaskAuthor
       author: eaa
@@ -141,8 +160,6 @@ databaseChangeLog:
             baseTableName: tasks
             baseTableSchemaName: public
             constraintName: fk_tasks_author
-            deferrable: true
-            initiallyDeferred: true
             onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: users
@@ -157,8 +174,6 @@ databaseChangeLog:
             baseTableName: tasks
             baseTableSchemaName: public
             constraintName: fk_tasks_executor
-            deferrable: true
-            initiallyDeferred: true
             onUpdate: RESTRICT
             referencedColumnNames: id
             referencedTableName: users

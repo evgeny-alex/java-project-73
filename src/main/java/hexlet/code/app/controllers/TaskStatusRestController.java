@@ -2,8 +2,6 @@ package hexlet.code.app.controllers;
 
 import hexlet.code.app.dto.TaskStatusRequestDto;
 import hexlet.code.app.dto.TaskStatusResponseDto;
-import hexlet.code.app.dto.UserRequestDto;
-import hexlet.code.app.dto.UserResponseDto;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.services.TaskStatusService;
 import org.springframework.beans.factory.annotation.Autowired;

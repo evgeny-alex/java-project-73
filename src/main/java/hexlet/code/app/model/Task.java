@@ -29,12 +29,11 @@ public class Task {
     private String description;
 
     @Column(name = "task_status")
-    private Integer taskStatus;
+    private TaskStatus taskStatus;
 
     @Column(name = "author")
-    private Integer author;
+    private User author;
 
-    @ManyToOne
     @Column(name = "executor")
     private User executor;
 
@@ -43,8 +42,7 @@ public class Task {
     @Column(name = "created_at")
     private Date createdAt;
 
-    // TODO: 18.11.2022 Доделать связи и CRUD задач
-//    Если пользователь связан хотя бы с одной задачей, его нельзя удалить
+//    Если пользователь связан хотя бы с одной задачей, его нельзя удалить - пока идея сделать это на уровне сервиса
 //    Если статус связан хотя бы с одной задачей, его нельзя удалить
 
 }
