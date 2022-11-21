@@ -1,6 +1,7 @@
 package hexlet.code.app.services;
 
 import hexlet.code.app.dto.UserRequestDto;
+import hexlet.code.app.dto.UserResponseDto;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,7 +54,7 @@ public class UserService implements UserDetailsService {
     /**
      * Получение списка всех пользователей
      *
-     * @return - список все пользователей
+     * @return - список всех пользователей
      */
     public List<User> getAllUserList() {
         return userRepository.findAll();
@@ -88,5 +89,23 @@ public class UserService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return userRepository.getByEmail(username);
+    }
+
+    /**
+     * Преобразование объекта сущности пользвателя к DTO ответа
+     *
+     * @param user - сущность пользователя
+     * @return - DTO ответа
+     */
+    public UserResponseDto entityToResponseDto(User user) {
+        UserResponseDto userResponseDto = new UserResponseDto();
+
+        userResponseDto.setId(user.getId());
+        userResponseDto.setEmail(user.getEmail());
+        userResponseDto.setFirstName(user.getFirstName());
+        userResponseDto.setLastName(user.getLastName());
+        userResponseDto.setCreatedAt(user.getCreatedAt());
+
+        return userResponseDto;
     }
 }

@@ -22,12 +22,7 @@ public class TaskStatusRestController {
     public ResponseEntity<TaskStatusResponseDto> getStatus(@PathVariable("id") String id) {
         TaskStatus taskStatus = taskStatusService.getTaskStatusById(Integer.getInteger(id));
         if (taskStatus != null) {
-            TaskStatusResponseDto taskStatusResponseDto = new TaskStatusResponseDto();
-
-            taskStatusResponseDto.setId(taskStatus.getId());
-            taskStatusResponseDto.setName(taskStatus.getName());
-            taskStatusResponseDto.setCreatedAt(taskStatus.getCreatedAt());
-
+            TaskStatusResponseDto taskStatusResponseDto = taskStatusService.entityToResponseDto(taskStatus);
             return ResponseEntity.ok(taskStatusResponseDto);
         }
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -36,15 +31,9 @@ public class TaskStatusRestController {
     @GetMapping
     public ResponseEntity<List<TaskStatusResponseDto>> getAllStatus() {
         List<TaskStatus> taskStatusList = taskStatusService.getAllTaskStatusList();
-        List<TaskStatusResponseDto> taskStatusResponseDtoList = taskStatusList.stream().map(taskStatus -> {
-            TaskStatusResponseDto taskStatusResponseDto = new TaskStatusResponseDto();
-
-            taskStatusResponseDto.setId(taskStatus.getId());
-            taskStatusResponseDto.setName(taskStatus.getName());
-            taskStatusResponseDto.setCreatedAt(taskStatus.getCreatedAt());
-
-            return taskStatusResponseDto;
-        }).toList();
+        List<TaskStatusResponseDto> taskStatusResponseDtoList = taskStatusList.stream().map(taskStatus ->
+            taskStatusService.entityToResponseDto(taskStatus)
+        ).toList();
         return ResponseEntity.ok(taskStatusResponseDtoList);
     }
 

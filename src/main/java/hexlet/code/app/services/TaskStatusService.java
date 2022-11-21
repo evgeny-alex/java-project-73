@@ -1,6 +1,7 @@
 package hexlet.code.app.services;
 
 import hexlet.code.app.dto.TaskStatusRequestDto;
+import hexlet.code.app.dto.TaskStatusResponseDto;
 import hexlet.code.app.model.TaskStatus;
 import hexlet.code.app.repository.TaskStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,5 +70,21 @@ public class TaskStatusService {
      */
     public void deleteTaskStatus(Integer id) {
         taskStatusRepository.deleteById(id);
+    }
+
+    /**
+     * Преобразование сущности статуса задачи в DTO ответа
+     *
+     * @param taskStatus - сущность статуса задачи
+     * @return - DTO ответа
+     */
+    public TaskStatusResponseDto entityToResponseDto(TaskStatus taskStatus) {
+        TaskStatusResponseDto taskStatusResponseDto = new TaskStatusResponseDto();
+
+        taskStatusResponseDto.setId(taskStatus.getId());
+        taskStatusResponseDto.setName(taskStatus.getName());
+        taskStatusResponseDto.setCreatedAt(taskStatus.getCreatedAt());
+
+        return taskStatusResponseDto;
     }
 }

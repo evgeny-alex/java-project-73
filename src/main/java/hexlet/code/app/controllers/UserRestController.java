@@ -28,33 +28,18 @@ public class UserRestController {
     public ResponseEntity<UserResponseDto> getUser(@PathVariable("id") String id) {
         User user = userService.getUserById(Integer.getInteger(id));
         if (user != null) {
-            UserResponseDto userResponseDto = new UserResponseDto();
-
-            userResponseDto.setId(user.getId());
-            userResponseDto.setEmail(user.getEmail());
-            userResponseDto.setFirstName(user.getFirstName());
-            userResponseDto.setLastName(user.getLastName());
-            userResponseDto.setCreatedAt(user.getCreatedAt());
-
+            UserResponseDto userResponseDto = userService.entityToResponseDto(user);
             return ResponseEntity.ok(userResponseDto);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping
     public ResponseEntity<List<UserResponseDto>> getAllUser() {
         List<User> userList = userService.getAllUserList();
-        List<UserResponseDto> userResponseDtoList = userList.stream().map(user -> {
-            UserResponseDto userResponseDto = new UserResponseDto();
-
-            userResponseDto.setId(user.getId());
-            userResponseDto.setEmail(user.getEmail());
-            userResponseDto.setFirstName(user.getFirstName());
-            userResponseDto.setLastName(user.getLastName());
-            userResponseDto.setCreatedAt(user.getCreatedAt());
-
-            return userResponseDto;
-        }).toList();
+        List<UserResponseDto> userResponseDtoList = userList.stream().map(user ->
+                userService.entityToResponseDto(user)
+        ).toList();
         return ResponseEntity.ok(userResponseDtoList);
     }
 
