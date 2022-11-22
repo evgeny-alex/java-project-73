@@ -6,6 +6,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import javax.persistence.*;
 import javax.validation.constraints.Size;
 import java.util.Date;
+import java.util.List;
 
 import static javax.persistence.GenerationType.AUTO;
 import static javax.persistence.TemporalType.TIMESTAMP;
@@ -28,13 +29,16 @@ public class Task {
     @Size(min = 3, max = 1_000)
     private String description;
 
-    @Column(name = "task_status")
+    @ManyToOne
+    @JoinColumn(name = "task_status")
     private TaskStatus taskStatus;
 
-    @Column(name = "author")
+    @ManyToOne
+    @JoinColumn(name = "author")
     private User author;
 
-    @Column(name = "executor")
+    @ManyToOne
+    @JoinColumn(name = "executor")
     private User executor;
 
     @CreationTimestamp
@@ -42,6 +46,11 @@ public class Task {
     @Column(name = "created_at")
     private Date createdAt;
 
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(name = "labels_tasks",
+            joinColumns = @JoinColumn(name = "tasks_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "labels_id", referencedColumnName = "id"))
+    private List<Label> labelList;
 //    Если пользователь связан хотя бы с одной задачей, его нельзя удалить - пока идея сделать это на уровне сервиса
 //    Если статус связан хотя бы с одной задачей, его нельзя удалить
 

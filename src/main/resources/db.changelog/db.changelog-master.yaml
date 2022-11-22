@@ -179,3 +179,51 @@ databaseChangeLog:
             referencedTableName: users
             referencedTableSchemaName: public
             validate: true
+  - changeSet:
+      id: createTable-Labels
+      author: eaa
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: created_at
+                  type: timestamp
+            remarks: A String
+            schemaName: public
+            tableName: labels
+            tablespace: Label table space
+  - changeSet:
+      id: createTable-Labels-Tasks
+      author: eaa
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  name: id
+                  type: integer
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: label_id
+                  type: integer
+                  constraints:
+                    - nullable: false
+              - column:
+                  name: task_id
+                  type: integer
+                  constraints:
+                    - nullable: false
+            remarks: A String
+            schemaName: public
+            tableName: labels_tasks
+            tablespace: Label table space
