@@ -55,7 +55,7 @@ public class UserRestControllerTest {
     @ValueSource(strings = {"json/request_update_user.json"})
     public void updateUserTest(String resourcePathData) throws Exception {
         UserRequestDto userRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:" + resourcePathData).getFile(), UserRequestDto.class);
-        mockMvc.perform(MockMvcRequestBuilders.put("/users/" + userRequestDto.getId())
+        mockMvc.perform(MockMvcRequestBuilders.put("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequestDto)))
                 .andExpect(status().isOk());

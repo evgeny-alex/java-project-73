@@ -227,3 +227,17 @@ databaseChangeLog:
             schemaName: public
             tableName: labels_tasks
             tablespace: Label table space
+  - changeSet:
+      id: addForeignKeyConstraint-FK_LABELS_TASKS_LABELS
+      author: eaa
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: label_id
+            baseTableName: labels_tasks
+            baseTableSchemaName: public
+            constraintName: fk_labels_tasks_labels
+            onDelete: RESTRICT
+            referencedColumnNames: id
+            referencedTableName: labels
+            referencedTableSchemaName: public
+            validate: true
