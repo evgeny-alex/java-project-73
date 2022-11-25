@@ -75,4 +75,13 @@ public class TaskRestController {
         taskService.deleteTask(Integer.getInteger(id));
         return ResponseEntity.ok("Task successfully deleted");
     }
+
+    @GetMapping
+    public ResponseEntity<TaskResponseDto> filterTasks(@RequestParam(required = false) Integer taskStatus,
+                                                      @RequestParam(required = false) Integer executorId,
+                                                      @RequestParam(required = false) Integer labels,
+                                                      @RequestParam(required = false) Integer authorId) {
+        // TODO: 25.11.2022 Реализовать фильтрацию
+        return ResponseEntity.ok(null);
+    }
 }
