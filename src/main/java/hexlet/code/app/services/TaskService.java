@@ -5,11 +5,11 @@ import hexlet.code.app.dto.TaskResponseDto;
 import hexlet.code.app.dto.TaskSearchCriteria;
 import hexlet.code.app.model.Task;
 import hexlet.code.app.repository.TaskRepository;
-import org.apache.tomcat.util.threads.TaskThread;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
@@ -35,13 +35,19 @@ public class TaskService {
     @Autowired
     private EntityManager entityManager;
 
-    @Autowired
     private CriteriaBuilder criteriaBuilder;
+
+    private CriteriaBuilder getCriteriaBuilder() {
+        if (criteriaBuilder == null) {
+            criteriaBuilder = entityManager.getCriteriaBuilder();
+        }
+        return criteriaBuilder;
+    }
 
     /**
      * Создание задачи
      *
-     * @param taskDto - DTO задачи
+     * @param taskDto  - DTO задачи
      * @param authorId - ID автора задачи
      * @return - сущность задачи
      */
@@ -82,7 +88,7 @@ public class TaskService {
      * Обновление задачи
      *
      * @param taskDto - DTO задачи
-     * @param id - ID задачи
+     * @param id      - ID задачи
      */
     public void updateTask(TaskRequestDto taskDto, Integer id) {
         Task task = taskRepository.getById(id);
@@ -136,21 +142,22 @@ public class TaskService {
         Root<Task> root = criteriaQuery.from(Task.class);
 
         Predicate predicate = buildPredicate(taskSearchCriteria, root);
-        // TODO: 28.11.2022 Доделать фильтрацию
-        return null;
+        criteriaQuery.where(predicate);
+        TypedQuery<Task> typedQuery = entityManager.createQuery(criteriaQuery);
+        return typedQuery.getResultList();
     }
 
     /**
      * Формирование предиката для запроса задач по критерию поиска
      *
      * @param taskSearchCriteria - критерий поиска
-     * @param root - класс-корень запроса
+     * @param root               - класс-корень запроса
      * @return - итоговый предикат
      */
     private Predicate buildPredicate(TaskSearchCriteria taskSearchCriteria, Root<Task> root) {
         List<Predicate> predicateList = new ArrayList<>();
         if (Objects.nonNull(taskSearchCriteria.getTaskStatus())) {
-             predicateList.add(criteriaBuilder.equal(root.get(TASK_STATUS), taskSearchCriteria.getTaskStatus()));
+            predicateList.add(criteriaBuilder.equal(root.get(TASK_STATUS), taskSearchCriteria.getTaskStatus()));
         }
         if (Objects.nonNull(taskSearchCriteria.getAuthorId())) {
             predicateList.add(criteriaBuilder.equal(root.get(AUTHOR_ID), taskSearchCriteria.getAuthorId()));

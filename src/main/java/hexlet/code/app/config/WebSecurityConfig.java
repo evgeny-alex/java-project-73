@@ -34,7 +34,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().exceptionHandling()
                 .and().sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
+        // TODO: 29.11.2022 Исправить ошибку 403 на получении статусов, задач, лейблов
         http.csrf().disable();
         http.headers().frameOptions().disable();
     }

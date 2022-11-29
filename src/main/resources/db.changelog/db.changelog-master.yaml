@@ -203,6 +203,17 @@ databaseChangeLog:
             tableName: labels
             tablespace: Label table space
   - changeSet:
+      id: addPrimaryKey-Labels
+      author: eaa
+      changes:
+        - addPrimaryKey:
+            columnNames: id
+            constraintName: pk_labels
+            schemaName: public
+            tableName: labels
+            tablespace: Labels table space
+            validate: true
+  - changeSet:
       id: createTable-Labels-Tasks
       author: eaa
       changes:
@@ -227,6 +238,17 @@ databaseChangeLog:
             schemaName: public
             tableName: labels_tasks
             tablespace: Label table space
+  - changeSet:
+      id: addPrimaryKey-Labels-Tasks
+      author: eaa
+      changes:
+        - addPrimaryKey:
+            columnNames: id
+            constraintName: pk_labels_tasks
+            schemaName: public
+            tableName: labels_tasks
+            tablespace: Labels-tasks table space
+            validate: true
   - changeSet:
       id: addForeignKeyConstraint-FK_LABELS_TASKS_LABELS
       author: eaa
