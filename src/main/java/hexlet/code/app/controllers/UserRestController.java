@@ -26,7 +26,7 @@ public class UserRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable("id") String id) {
-        User user = userService.getUserById(Integer.getInteger(id));
+        User user = userService.getUserById(Integer.parseInt(id));
         if (user != null) {
             UserResponseDto userResponseDto = userService.entityToResponseDto(user);
             return ResponseEntity.ok(userResponseDto);
@@ -43,15 +43,15 @@ public class UserRestController {
         return ResponseEntity.ok(userResponseDtoList);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateUser(@RequestBody UserRequestDto userDto, @PathVariable("id") String id) {
-        userService.updateUser(userDto, Integer.getInteger(id));
+        userService.updateUser(userDto, Integer.parseInt(id));
         return ResponseEntity.ok("User successfully updated");
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") String id) {
-        userService.deleteUser(Integer.getInteger(id));
+        userService.deleteUser(Integer.parseInt(id));
         return ResponseEntity.ok("User successfully deleted");
     }
 }
