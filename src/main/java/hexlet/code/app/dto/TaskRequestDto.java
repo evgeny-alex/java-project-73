@@ -11,9 +11,9 @@ public class TaskRequestDto {
 
     private String description;
 
-    private Integer taskStatus;
+    private Integer taskStatusId;
 
-    private Integer author;
+    private Integer authorId;
 
-    private Integer executor;
+    private Integer executorId;
 }

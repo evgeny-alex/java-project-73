@@ -56,8 +56,8 @@ public class TaskService {
 
         task.setName(taskDto.getName());
         task.setDescription(taskDto.getDescription());
-        task.setTaskStatus(taskStatusService.getTaskStatusById(taskDto.getTaskStatus()));
-        task.setExecutor(userService.getUserById(taskDto.getExecutor()));
+        task.setTaskStatus(taskStatusService.getTaskStatusById(taskDto.getTaskStatusId()));
+        task.setExecutor(userService.getUserById(taskDto.getExecutorId()));
         task.setAuthor(userService.getUserById(authorId));
 
         taskRepository.save(task);
@@ -95,9 +95,9 @@ public class TaskService {
 
         task.setName(taskDto.getName());
         task.setDescription(taskDto.getDescription());
-        task.setTaskStatus(taskStatusService.getTaskStatusById(taskDto.getTaskStatus()));
-        task.setExecutor(userService.getUserById(taskDto.getExecutor()));
-        task.setAuthor(userService.getUserById(taskDto.getAuthor()));
+        task.setTaskStatus(taskStatusService.getTaskStatusById(taskDto.getTaskStatusId()));
+        task.setExecutor(userService.getUserById(taskDto.getExecutorId()));
+        task.setAuthor(userService.getUserById(taskDto.getAuthorId()));
 
         taskRepository.save(task);
     }

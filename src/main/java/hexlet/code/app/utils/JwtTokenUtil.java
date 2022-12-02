@@ -16,10 +16,11 @@ import java.util.List;
 import java.util.function.Function;
 
 import static hexlet.code.app.constants.SecurityConstants.ACCESS_TOKEN_VALIDITY_SECONDS;
-import static hexlet.code.app.constants.SecurityConstants.SIGNING_KEY;
 
 @Component
 public class JwtTokenUtil implements Serializable {
+
+    private static final SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
@@ -36,7 +37,7 @@ public class JwtTokenUtil implements Serializable {
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
-                .setSigningKey(SIGNING_KEY)
+                .setSigningKey(key)
                 .parseClaimsJws(token)
                 .getBody();
     }
@@ -54,8 +55,6 @@ public class JwtTokenUtil implements Serializable {
 
         Claims claims = Jwts.claims().setSubject(subject);
         claims.put("scopes", List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
-
-        SecretKey key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
         return Jwts.builder()
                 .setClaims(claims)

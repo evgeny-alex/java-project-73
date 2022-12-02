@@ -33,6 +33,4 @@ public class Label {
 
     @ManyToMany(mappedBy = "labelList")
     private List<Task> taskList;
-
-    // TODO: 22.11.2022 Реализовать CRUD и все тесты
 }

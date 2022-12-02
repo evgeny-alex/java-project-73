@@ -12,7 +12,7 @@ import static javax.persistence.TemporalType.TIMESTAMP;
 
 @Entity
 @Data
-@Table(name = "taskstatus")
+@Table(name = "taskstatuses")
 public class TaskStatus {
 
     @Id
