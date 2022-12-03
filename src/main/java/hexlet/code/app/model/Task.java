@@ -48,8 +48,8 @@ public class Task {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "labels_tasks",
-            joinColumns = @JoinColumn(name = "tasks_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "labels_id", referencedColumnName = "id"))
+            joinColumns = @JoinColumn(name = "task_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "label_id", referencedColumnName = "id"))
     private List<Label> labelList;
 //    Если пользователь связан хотя бы с одной задачей, его нельзя удалить - пока идея сделать это на уровне сервиса
 //    Если статус связан хотя бы с одной задачей, его нельзя удалить

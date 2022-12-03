@@ -17,6 +17,7 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static hexlet.code.app.constants.TaskSearchCriteriaConstants.*;
 
@@ -34,6 +35,9 @@ public class TaskService {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private LabelService labelService;
 
     private CriteriaBuilder criteriaBuilder;
 
@@ -59,6 +63,7 @@ public class TaskService {
         task.setTaskStatus(taskStatusService.getTaskStatusById(taskDto.getTaskStatusId()));
         task.setExecutor(userService.getUserById(taskDto.getExecutorId()));
         task.setAuthor(userService.getUserById(authorId));
+        task.setLabelList(taskDto.getLabelIds().stream().map(labelId -> labelService.getLabelById(labelId)).collect(Collectors.toList()));
 
         taskRepository.save(task);
 
@@ -98,6 +103,7 @@ public class TaskService {
         task.setTaskStatus(taskStatusService.getTaskStatusById(taskDto.getTaskStatusId()));
         task.setExecutor(userService.getUserById(taskDto.getExecutorId()));
         task.setAuthor(userService.getUserById(taskDto.getAuthorId()));
+        task.setLabelList(taskDto.getLabelIds().stream().map(labelId -> labelService.getLabelById(labelId)).collect(Collectors.toList()));
 
         taskRepository.save(task);
     }
@@ -120,6 +126,7 @@ public class TaskService {
     public TaskResponseDto entityToResponseDto(Task task) {
         TaskResponseDto taskResponseDto = new TaskResponseDto();
 
+        taskResponseDto.setId(task.getId());
         taskResponseDto.setName(task.getName());
         taskResponseDto.setDescription(task.getDescription());
         taskResponseDto.setCreatedAt(task.getCreatedAt());

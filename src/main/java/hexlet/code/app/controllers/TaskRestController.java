@@ -47,7 +47,7 @@ public class TaskRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDto> getTask(@PathVariable("id") String id) {
-        Task task = taskService.getTaskById(Integer.getInteger(id));
+        Task task = taskService.getTaskById(Integer.parseInt(id));
         if (task != null) {
             TaskResponseDto taskResponseDto = taskService.entityToResponseDto(task);
             return ResponseEntity.ok(taskResponseDto);
@@ -64,15 +64,15 @@ public class TaskRestController {
         return ResponseEntity.ok(taskResponseDtoList);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateTask(@RequestBody TaskRequestDto taskRequestDto, @PathVariable("id") String id) {
-        taskService.updateTask(taskRequestDto, Integer.getInteger(id));
+        taskService.updateTask(taskRequestDto, Integer.parseInt(id));
         return ResponseEntity.ok("Task successfully updated");
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteTask(@PathVariable("id") String id) {
-        taskService.deleteTask(Integer.getInteger(id));
+        taskService.deleteTask(Integer.parseInt(id));
         return ResponseEntity.ok("Task successfully deleted");
     }
 

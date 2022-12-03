@@ -20,7 +20,7 @@ public class TaskStatusRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<TaskStatusResponseDto> getStatus(@PathVariable("id") String id) {
-        TaskStatus taskStatus = taskStatusService.getTaskStatusById(Integer.getInteger(id));
+        TaskStatus taskStatus = taskStatusService.getTaskStatusById(Integer.parseInt(id));
         if (taskStatus != null) {
             TaskStatusResponseDto taskStatusResponseDto = taskStatusService.entityToResponseDto(taskStatus);
             return ResponseEntity.ok(taskStatusResponseDto);
@@ -45,13 +45,13 @@ public class TaskStatusRestController {
 
     @PutMapping
     public ResponseEntity<String> updateTaskStatus(@RequestBody TaskStatusRequestDto taskStatusRequestDto, @PathVariable("id") String id) {
-        taskStatusService.updateTaskStatus(taskStatusRequestDto, Integer.getInteger(id));
+        taskStatusService.updateTaskStatus(taskStatusRequestDto, Integer.parseInt(id));
         return ResponseEntity.ok("Task status successfully updated");
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteTaskStatus(@PathVariable("id") String id) {
-        taskStatusService.deleteTaskStatus(Integer.getInteger(id));
+        taskStatusService.deleteTaskStatus(Integer.parseInt(id));
         return ResponseEntity.ok("Task status successfully deleted");
     }
 

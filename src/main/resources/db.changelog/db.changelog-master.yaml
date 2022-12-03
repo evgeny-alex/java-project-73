@@ -42,6 +42,20 @@ databaseChangeLog:
             tablespace: Users table space
             validate: true
   - changeSet:
+      id:  addUniqueConstraint-email-users
+      author:  liquibase-docs
+      changes:
+        - addUniqueConstraint:
+            columnNames:  email
+            constraintName:  uq_email_users
+            deferrable:  true
+            disabled:  true
+            initiallyDeferred:  true
+            schemaName:  public
+            tableName:  users
+            tablespace:  A String
+            validate:  true
+  - changeSet:
       id: createSequence
       author: eaa
       changes:

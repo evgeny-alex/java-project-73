@@ -40,7 +40,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        // TODO: 29.11.2022 Сделать секрет длинее
         http.csrf().disable();
         http.headers().frameOptions().disable();
     }

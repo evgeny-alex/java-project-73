@@ -26,7 +26,7 @@ public class LabelRestController {
 
     @GetMapping("/{id}")
     public ResponseEntity<LabelResponseDto> getLabel(@PathVariable("id") String id) {
-        Label label = labelService.getLabelById(Integer.getInteger(id));
+        Label label = labelService.getLabelById(Integer.parseInt(id));
         if (label != null) {
             LabelResponseDto labelResponseDto = labelService.entityToResponseDto(label);
             return ResponseEntity.ok(labelResponseDto);
@@ -45,13 +45,13 @@ public class LabelRestController {
 
     @PutMapping
     public ResponseEntity<String> updateLabel(@RequestBody LabelRequestDto labelDto, @PathVariable("id") String id) {
-        labelService.updateLabel(labelDto, Integer.getInteger(id));
+        labelService.updateLabel(labelDto, Integer.parseInt(id));
         return ResponseEntity.ok("Label successfully updated");
     }
 
     @DeleteMapping
     public ResponseEntity<String> deleteLabel(@PathVariable("id") String id) {
-        labelService.deleteLabel(Integer.getInteger(id));
+        labelService.deleteLabel(Integer.parseInt(id));
         return ResponseEntity.ok("Label successfully deleted");
     }
 }
