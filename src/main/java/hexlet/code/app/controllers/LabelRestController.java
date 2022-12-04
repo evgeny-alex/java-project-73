@@ -43,7 +43,7 @@ public class LabelRestController {
         return ResponseEntity.ok(labelResponseDtoList);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateLabel(@RequestBody LabelRequestDto labelDto, @PathVariable("id") String id) {
         labelService.updateLabel(labelDto, Integer.parseInt(id));
         return ResponseEntity.ok("Label successfully updated");

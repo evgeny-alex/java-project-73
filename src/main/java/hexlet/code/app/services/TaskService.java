@@ -102,7 +102,6 @@ public class TaskService {
         task.setDescription(taskDto.getDescription());
         task.setTaskStatus(taskStatusService.getTaskStatusById(taskDto.getTaskStatusId()));
         task.setExecutor(userService.getUserById(taskDto.getExecutorId()));
-        task.setAuthor(userService.getUserById(taskDto.getAuthorId()));
         task.setLabelList(taskDto.getLabelIds().stream().map(labelId -> labelService.getLabelById(labelId)).collect(Collectors.toList()));
 
         taskRepository.save(task);
@@ -145,7 +144,7 @@ public class TaskService {
      */
     public List<Task> findWithSearchCriteria(TaskSearchCriteria taskSearchCriteria) {
         // построение запроса
-        CriteriaQuery<Task> criteriaQuery = criteriaBuilder.createQuery(Task.class);
+        CriteriaQuery<Task> criteriaQuery = getCriteriaBuilder().createQuery(Task.class);
         Root<Task> root = criteriaQuery.from(Task.class);
 
         Predicate predicate = buildPredicate(taskSearchCriteria, root);
@@ -164,17 +163,18 @@ public class TaskService {
     private Predicate buildPredicate(TaskSearchCriteria taskSearchCriteria, Root<Task> root) {
         List<Predicate> predicateList = new ArrayList<>();
         if (Objects.nonNull(taskSearchCriteria.getTaskStatus())) {
-            predicateList.add(criteriaBuilder.equal(root.get(TASK_STATUS), taskSearchCriteria.getTaskStatus()));
+            predicateList.add(getCriteriaBuilder().equal(root.get(TASK_STATUS), taskSearchCriteria.getTaskStatus()));
         }
         if (Objects.nonNull(taskSearchCriteria.getAuthorId())) {
-            predicateList.add(criteriaBuilder.equal(root.get(AUTHOR_ID), taskSearchCriteria.getAuthorId()));
+            predicateList.add(getCriteriaBuilder().equal(root.get(AUTHOR_ID), taskSearchCriteria.getAuthorId()));
         }
         if (Objects.nonNull(taskSearchCriteria.getExecutorId())) {
-            predicateList.add(criteriaBuilder.equal(root.get(EXECUTOR_ID), taskSearchCriteria.getExecutorId()));
+            predicateList.add(getCriteriaBuilder().equal(root.get(EXECUTOR_ID), taskSearchCriteria.getExecutorId()));
         }
         if (Objects.nonNull(taskSearchCriteria.getLabels())) {
-            predicateList.add(criteriaBuilder.equal(root.get(LABELS), taskSearchCriteria.getLabels()));
+            predicateList.add(getCriteriaBuilder().equal(root.get(LABELS), taskSearchCriteria.getLabels()));
+            // TODO: 04.12.2022 Разобраться с поиском по лейблу
         }
-        return criteriaBuilder.and(predicateList.toArray(new Predicate[0]));
+        return getCriteriaBuilder().and(predicateList.toArray(new Predicate[0]));
     }
 }

@@ -43,7 +43,7 @@ public class TaskStatusRestController {
         return ResponseEntity.ok("Task status successfully created with id = " + id);
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     public ResponseEntity<String> updateTaskStatus(@RequestBody TaskStatusRequestDto taskStatusRequestDto, @PathVariable("id") String id) {
         taskStatusService.updateTaskStatus(taskStatusRequestDto, Integer.parseInt(id));
         return ResponseEntity.ok("Task status successfully updated");

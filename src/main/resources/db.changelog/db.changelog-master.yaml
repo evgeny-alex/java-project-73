@@ -234,11 +234,6 @@ databaseChangeLog:
         - createTable:
             columns:
               - column:
-                  name: id
-                  type: integer
-                  constraints:
-                    - nullable: false
-              - column:
                   name: label_id
                   type: integer
                   constraints:
@@ -252,17 +247,6 @@ databaseChangeLog:
             schemaName: public
             tableName: labels_tasks
             tablespace: Label table space
-  - changeSet:
-      id: addPrimaryKey-Labels-Tasks
-      author: eaa
-      changes:
-        - addPrimaryKey:
-            columnNames: id
-            constraintName: pk_labels_tasks
-            schemaName: public
-            tableName: labels_tasks
-            tablespace: Labels-tasks table space
-            validate: true
   - changeSet:
       id: addForeignKeyConstraint-FK_LABELS_TASKS_LABELS
       author: eaa
