@@ -51,10 +51,4 @@ public class AuthRestController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }
-
-    @PostMapping("/register")
-    public ResponseEntity<String> register(@RequestBody UserRequestDto userRequestDto) {
-        userService.createUser(userRequestDto);
-        return ResponseEntity.ok("OK");
-    }
 }

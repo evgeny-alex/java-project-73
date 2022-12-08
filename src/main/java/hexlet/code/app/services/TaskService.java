@@ -3,6 +3,7 @@ package hexlet.code.app.services;
 import hexlet.code.app.dto.TaskRequestDto;
 import hexlet.code.app.dto.TaskResponseDto;
 import hexlet.code.app.dto.TaskSearchCriteria;
+import hexlet.code.app.model.Label;
 import hexlet.code.app.model.Task;
 import hexlet.code.app.repository.TaskRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,6 +151,10 @@ public class TaskService {
         Predicate predicate = buildPredicate(taskSearchCriteria, root);
         criteriaQuery.where(predicate);
         TypedQuery<Task> typedQuery = entityManager.createQuery(criteriaQuery);
+        if (Objects.nonNull(taskSearchCriteria.getLabels())) {
+            Label label = labelService.getLabelById(taskSearchCriteria.getLabels());
+            return typedQuery.getResultList().stream().filter(task -> task.getLabelList().contains(label)).collect(Collectors.toList());
+        }
         return typedQuery.getResultList();
     }
 
@@ -170,10 +175,6 @@ public class TaskService {
         }
         if (Objects.nonNull(taskSearchCriteria.getExecutorId())) {
             predicateList.add(getCriteriaBuilder().equal(root.get(EXECUTOR_ID), taskSearchCriteria.getExecutorId()));
-        }
-        if (Objects.nonNull(taskSearchCriteria.getLabels())) {
-            predicateList.add(getCriteriaBuilder().equal(root.get(LABELS), taskSearchCriteria.getLabels()));
-            // TODO: 04.12.2022 Разобраться с поиском по лейблу
         }
         return getCriteriaBuilder().and(predicateList.toArray(new Predicate[0]));
     }
