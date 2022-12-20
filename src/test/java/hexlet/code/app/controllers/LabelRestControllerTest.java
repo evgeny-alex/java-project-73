@@ -27,9 +27,9 @@ public class LabelRestControllerTest {
     @Test
     public void getOneLabelTest() throws Exception {
         String labelId = "1";
-        mockMvc.perform(MockMvcRequestBuilders.get("/users/" + labelId))
+        mockMvc.perform(MockMvcRequestBuilders.get("/labels/" + labelId))
                 .andExpect(status().isOk());
     }
 
-    // TODO: 23.11.2022 Доделать тесты для всех контроллеров, замокать все обращения и проверить
+    // TODO: 23.11.2022 1.Доделать тесты для всех контроллеров, замокать все обращения и проверить 2. Swagger 3. Эксплуатация 4. Деплой
 }
