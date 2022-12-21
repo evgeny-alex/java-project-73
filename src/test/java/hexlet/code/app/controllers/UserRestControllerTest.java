@@ -10,8 +10,6 @@ import hexlet.code.app.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -100,6 +97,8 @@ public class UserRestControllerTest {
                         .content(objectMapper.writeValueAsString(userRequestDto)))
                 .andExpect(status().isOk());
 
+
+
         User expectedUser = userRepository.getById(Integer.parseInt(userRequestDto.getId()));
 
         assertEquals(expectedUser.getEmail(), userRequestDto.getEmail());
@@ -107,14 +106,19 @@ public class UserRestControllerTest {
         assertEquals(expectedUser.getFirstName(), userRequestDto.getFirstName());
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = {"json/request_update_user.json"})
-    public void updateUserTest(String resourcePathData) throws Exception {
-        UserRequestDto userRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:" + resourcePathData).getFile(), UserRequestDto.class);
+    @Test
+    public void updateUserTest() throws Exception {
+        UserRequestDto userRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_update_user.json").getFile(), UserRequestDto.class);
         mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequestDto)))
                 .andExpect(status().isOk());
+
+        User expectedUserAfter = userRepository.getById(Integer.parseInt(userRequestDto.getId()));
+
+        assertEquals(expectedUserAfter.getEmail(), userRequestDto.getEmail());
+        assertEquals(expectedUserAfter.getLastName(), userRequestDto.getLastName());
+        assertEquals(expectedUserAfter.getFirstName(), userRequestDto.getFirstName());
     }
 
     @Test

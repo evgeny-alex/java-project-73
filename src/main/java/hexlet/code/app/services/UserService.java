@@ -69,9 +69,9 @@ public class UserService implements UserDetailsService {
     public void updateUser(UserRequestDto userRequestDto, Integer id) {
         User user = userRepository.getById(id);
 
-        user.setFirstName(user.getFirstName());
-        user.setLastName(user.getLastName());
-        user.setEmail(user.getEmail());
+        user.setFirstName(userRequestDto.getFirstName());
+        user.setLastName(userRequestDto.getLastName());
+        user.setEmail(userRequestDto.getEmail());
         user.setPassword(passwordEncoder.encode(userRequestDto.getPassword()));
 
         userRepository.save(user);
