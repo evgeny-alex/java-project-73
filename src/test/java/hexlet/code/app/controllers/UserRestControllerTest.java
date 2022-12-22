@@ -29,6 +29,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 public class UserRestControllerTest {
 
+    private static final String DEFAULT_EMAIL = "ivan2@google.com";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -97,9 +99,7 @@ public class UserRestControllerTest {
                         .content(objectMapper.writeValueAsString(userRequestDto)))
                 .andExpect(status().isOk());
 
-
-
-        User expectedUser = userRepository.getById(Integer.parseInt(userRequestDto.getId()));
+        User expectedUser = userRepository.getByEmail(userRequestDto.getEmail());
 
         assertEquals(expectedUser.getEmail(), userRequestDto.getEmail());
         assertEquals(expectedUser.getLastName(), userRequestDto.getLastName());
@@ -109,12 +109,11 @@ public class UserRestControllerTest {
     @Test
     public void updateUserTest() throws Exception {
         UserRequestDto userRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_update_user.json").getFile(), UserRequestDto.class);
-        mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/users/1")
+        User expectedUserAfter = userRepository.getByEmail(DEFAULT_EMAIL);
+        mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/users/" + expectedUserAfter.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequestDto)))
                 .andExpect(status().isOk());
-
-        User expectedUserAfter = userRepository.getById(Integer.parseInt(userRequestDto.getId()));
 
         assertEquals(expectedUserAfter.getEmail(), userRequestDto.getEmail());
         assertEquals(expectedUserAfter.getLastName(), userRequestDto.getLastName());
@@ -123,8 +122,8 @@ public class UserRestControllerTest {
 
     @Test
     public void deleteUserTest() throws Exception {
-        String userId = "1";
-        mockMvc.perform(MockMvcRequestBuilders.delete(baseUrl + "/users/" + userId))
+        User expectedUser = userRepository.getByEmail(DEFAULT_EMAIL);
+        mockMvc.perform(MockMvcRequestBuilders.delete(baseUrl + "/users/" + expectedUser.getId()))
                 .andExpect(status().isOk());
     }
 }
