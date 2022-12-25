@@ -10,7 +10,7 @@ import java.util.Collection;
 import java.util.Date;
 
 import static javax.persistence.GenerationType.AUTO;
-import static javax.persistence.TemporalType.TIMESTAMP;
+import static javax.persistence.TemporalType.*;
 
 @Entity
 @Data

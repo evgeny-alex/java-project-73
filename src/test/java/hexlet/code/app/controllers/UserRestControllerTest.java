@@ -1,6 +1,5 @@
 package hexlet.code.app.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.app.dto.UserRequestDto;
@@ -21,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static hexlet.code.app.utils.TestUtils.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,8 +28,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @AutoConfigureMockMvc
 public class UserRestControllerTest {
-
-    private static final String DEFAULT_EMAIL = "ivan2@google.com";
 
     @Autowired
     private MockMvc mockMvc;
@@ -42,18 +40,6 @@ public class UserRestControllerTest {
 
     @Autowired
     private UserRepository userRepository;
-
-    private static final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-
-    public static String asJson(final Object object) throws JsonProcessingException {
-        return mapper.writeValueAsString(object);
-    }
-
-    public static <T> T fromJson(final String json, final TypeReference<T> to) throws JsonProcessingException {
-        return mapper.readValue(json, to);
-    }
-
-    private static final String baseUrl = "/api";
 
     @BeforeEach
     public void initUser() throws Exception {
@@ -79,6 +65,7 @@ public class UserRestControllerTest {
         assertEquals(expectedUser.getId(), userExpectedDto.getId());
         assertEquals(expectedUser.getLastName(), userExpectedDto.getLastName());
         assertEquals(expectedUser.getFirstName(), userExpectedDto.getFirstName());
+        assertEquals(expectedUser.getCreatedAt(), userExpectedDto.getCreatedAt());
     }
 
     @Test
