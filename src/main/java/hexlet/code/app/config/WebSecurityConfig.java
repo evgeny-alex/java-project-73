@@ -36,6 +36,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/api/statuses").authenticated()
                 .antMatchers("/api/tasks").authenticated()
                 .antMatchers("/api/labels").authenticated()
+                .antMatchers("/api/labels/").authenticated()
                 .and().exceptionHandling()
                 .and().addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement()

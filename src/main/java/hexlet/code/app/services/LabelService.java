@@ -21,14 +21,14 @@ public class LabelService {
      * @param labelRequestDto - DTO запроса метки
      * @return - ID метки
      */
-    public Integer createLabel(LabelRequestDto labelRequestDto) {
+    public Label createLabel(LabelRequestDto labelRequestDto) {
         Label label = new Label();
 
         label.setName(labelRequestDto.getName());
 
         labelRepository.save(label);
 
-        return label.getId();
+        return label;
     }
 
     /**
@@ -56,12 +56,14 @@ public class LabelService {
      * @param labelRequestDto - DTO метки для обновления
      * @param id - ID метки
      */
-    public void updateLabel(LabelRequestDto labelRequestDto, Integer id) {
+    public Label updateLabel(LabelRequestDto labelRequestDto, Integer id) {
         Label label = labelRepository.getById(id);
 
         label.setName(labelRequestDto.getName());
 
         labelRepository.save(label);
+
+        return label;
     }
 
     /**

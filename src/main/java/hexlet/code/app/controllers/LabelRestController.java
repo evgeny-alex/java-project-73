@@ -19,9 +19,13 @@ public class LabelRestController {
     private LabelService labelService;
 
     @PostMapping
-    public ResponseEntity<String> createLabel(@RequestBody LabelRequestDto labelDto) {
-        Integer id = labelService.createLabel(labelDto);
-        return ResponseEntity.ok("Label successfully created with id = " + id);
+    public ResponseEntity<LabelResponseDto> createLabel(@RequestBody LabelRequestDto labelDto) {
+        Label label = labelService.createLabel(labelDto);
+        if (label != null) {
+            LabelResponseDto labelResponseDto = labelService.entityToResponseDto(label);
+            return ResponseEntity.ok(labelResponseDto);
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/{id}")
@@ -44,9 +48,13 @@ public class LabelRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateLabel(@RequestBody LabelRequestDto labelDto, @PathVariable("id") String id) {
-        labelService.updateLabel(labelDto, Integer.parseInt(id));
-        return ResponseEntity.ok("Label successfully updated");
+    public ResponseEntity<LabelResponseDto> updateLabel(@RequestBody LabelRequestDto labelDto, @PathVariable("id") String id) {
+        Label label = labelService.updateLabel(labelDto, Integer.parseInt(id));
+        if (label != null) {
+            LabelResponseDto labelResponseDto = labelService.entityToResponseDto(label);
+            return ResponseEntity.ok(labelResponseDto);
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @DeleteMapping
