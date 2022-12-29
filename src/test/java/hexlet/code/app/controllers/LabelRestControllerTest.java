@@ -141,5 +141,18 @@ public class LabelRestControllerTest {
         assertEquals(labelAfterUpdate.getName(), labelResponseDto.getName());
     }
 
+    @Test
+    public void deleteLabelTest() throws Exception {
+        Label label = labelRepository.findAll().get(0);
+        int countLabelsBeforeDelete = labelRepository.findAll().size();
+        mockMvc.perform(MockMvcRequestBuilders.delete(baseUrl + "/labels/" + label.getId())
+                        .header(AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        int countLabelsAfterDelete = labelRepository.findAll().size();
+
+        assertEquals(countLabelsBeforeDelete - 1, countLabelsAfterDelete);
+
+    }
+
     // TODO: 23.11.2022 1.Доделать тесты для всех контроллеров 2. Swagger 3. Эксплуатация 4. Деплой
 }

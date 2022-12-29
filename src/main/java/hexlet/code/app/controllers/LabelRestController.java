@@ -57,7 +57,7 @@ public class LabelRestController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteLabel(@PathVariable("id") String id) {
         labelService.deleteLabel(Integer.parseInt(id));
         return ResponseEntity.ok("Label successfully deleted");
