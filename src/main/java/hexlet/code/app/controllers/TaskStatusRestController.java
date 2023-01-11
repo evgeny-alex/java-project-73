@@ -25,7 +25,7 @@ public class TaskStatusRestController {
             TaskStatusResponseDto taskStatusResponseDto = taskStatusService.entityToResponseDto(taskStatus);
             return ResponseEntity.ok(taskStatusResponseDto);
         }
-        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping
@@ -38,18 +38,26 @@ public class TaskStatusRestController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createTaskStatus(@RequestBody TaskStatusRequestDto taskStatusRequestDto) {
-        Integer id = taskStatusService.createTaskStatus(taskStatusRequestDto);
-        return ResponseEntity.ok("Task status successfully created with id = " + id);
+    public ResponseEntity<TaskStatusResponseDto> createTaskStatus(@RequestBody TaskStatusRequestDto taskStatusRequestDto) {
+        TaskStatus taskStatus = taskStatusService.createTaskStatus(taskStatusRequestDto);
+        if (taskStatus != null) {
+            TaskStatusResponseDto taskStatusResponseDto = taskStatusService.entityToResponseDto(taskStatus);
+            return ResponseEntity.ok(taskStatusResponseDto);
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateTaskStatus(@RequestBody TaskStatusRequestDto taskStatusRequestDto, @PathVariable("id") String id) {
-        taskStatusService.updateTaskStatus(taskStatusRequestDto, Integer.parseInt(id));
-        return ResponseEntity.ok("Task status successfully updated");
+    public ResponseEntity<TaskStatusResponseDto> updateTaskStatus(@RequestBody TaskStatusRequestDto taskStatusRequestDto, @PathVariable("id") String id) {
+        TaskStatus taskStatus = taskStatusService.updateTaskStatus(taskStatusRequestDto, Integer.parseInt(id));
+        if (taskStatus != null) {
+            TaskStatusResponseDto taskStatusResponseDto = taskStatusService.entityToResponseDto(taskStatus);
+            return ResponseEntity.ok(taskStatusResponseDto);
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTaskStatus(@PathVariable("id") String id) {
         taskStatusService.deleteTaskStatus(Integer.parseInt(id));
         return ResponseEntity.ok("Task status successfully deleted");

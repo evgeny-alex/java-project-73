@@ -59,15 +59,6 @@ public class TaskRestController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    @GetMapping
-//    public ResponseEntity<List<TaskResponseDto>> getAllTask() {
-//        List<Task> taskList = taskService.getAllTaskList();
-//        List<TaskResponseDto> taskResponseDtoList = taskList.stream().map(task ->
-//                taskService.entityToResponseDto(task)
-//        ).toList();
-//        return ResponseEntity.ok(taskResponseDtoList);
-//    }
-
     @PutMapping("/{id}")
     public ResponseEntity<String> updateTask(@RequestBody TaskRequestDto taskRequestDto, @PathVariable("id") String id) {
         taskService.updateTask(taskRequestDto, Integer.parseInt(id));

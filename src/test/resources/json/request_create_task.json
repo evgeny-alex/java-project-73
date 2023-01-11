@@ -1,0 +1,6 @@
+{
+  "name": "Новая задача",
+  "description": "Описание новой задачи",
+  "executorId": 1,
+  "taskStatusId": 1
+}

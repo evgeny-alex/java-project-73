@@ -40,14 +40,14 @@ public class TaskStatusService {
      * @param taskStatusRequestDto - DTO для создания нового статус задачи
      * @return - ID новой записи
      */
-    public Integer createTaskStatus(TaskStatusRequestDto taskStatusRequestDto) {
+    public TaskStatus createTaskStatus(TaskStatusRequestDto taskStatusRequestDto) {
         TaskStatus taskStatus = new TaskStatus();
 
         taskStatus.setName(taskStatusRequestDto.getName());
 
         taskStatusRepository.save(taskStatus);
 
-        return taskStatus.getId();
+        return taskStatus;
     }
 
     /**
@@ -55,12 +55,14 @@ public class TaskStatusService {
      *
      * @param taskStatusRequestDto - DTO для обновления нового статус задачb
      */
-    public void updateTaskStatus(TaskStatusRequestDto taskStatusRequestDto, Integer id) {
+    public TaskStatus updateTaskStatus(TaskStatusRequestDto taskStatusRequestDto, Integer id) {
         TaskStatus taskStatus = taskStatusRepository.getById(id);
 
         taskStatus.setName(taskStatusRequestDto.getName());
 
         taskStatusRepository.save(taskStatus);
+
+        return taskStatus;
     }
 
     /**

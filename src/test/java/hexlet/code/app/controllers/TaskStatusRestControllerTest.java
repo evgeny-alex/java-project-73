@@ -20,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static hexlet.code.app.utils.TestUtils.baseUrl;
 import static hexlet.code.app.utils.TestUtils.fromJson;
@@ -90,4 +91,63 @@ public class TaskStatusRestControllerTest {
         assertEquals(taskStatus.getName(), taskStatusResponseDto.getName());
         assertEquals(taskStatus.getCreatedAt().getTime(), taskStatusResponseDto.getCreatedAt().getTime());
     }
+
+    @Test
+    public void getAllTaskStatusTest() throws Exception {
+        long size = taskStatusRepository.count();
+        var response = mockMvc.perform(MockMvcRequestBuilders.get(baseUrl + "/statuses")
+                        .header(AUTHORIZATION, token))
+                .andExpect(status().isOk()).andReturn().getResponse();
+
+        List<TaskStatusResponseDto> taskStatusResponseDtoList = fromJson(response.getContentAsString(StandardCharsets.UTF_8), new TypeReference<>() {
+        });
+
+        assertEquals(size, taskStatusResponseDtoList.size());
+    }
+
+    @Test
+    public void createTaskStatusTest() throws Exception {
+        TaskStatusRequestDto taskStatusRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_create_task_status.json").getFile(), TaskStatusRequestDto.class);
+        var response = mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/statuses")
+                        .header(AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(taskStatusRequestDto))).andExpect(status().isOk())
+                .andReturn().getResponse();
+
+        TaskStatusResponseDto taskStatusResponseDto = fromJson(response.getContentAsString(StandardCharsets.UTF_8), new TypeReference<>() {
+        });
+
+        assertEquals(taskStatusRequestDto.getName(), taskStatusResponseDto.getName());
+    }
+
+    @Test
+    public void updateTaskStatusTest() throws Exception {
+        TaskStatus taskStatus = taskStatusRepository.findAll().get(0);
+        TaskStatusRequestDto TaskStatusRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_update_task_status.json").getFile(), TaskStatusRequestDto.class);
+        var response = mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/statuses/" + taskStatus.getId())
+                        .header(AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(TaskStatusRequestDto))).andExpect(status().isOk())
+                .andReturn().getResponse();
+        TaskStatus taskStatusAfterUpdate = taskStatusRepository.getById(taskStatus.getId());
+
+        TaskStatusResponseDto taskStatusResponseDto = fromJson(response.getContentAsString(StandardCharsets.UTF_8), new TypeReference<>() {
+        });
+
+        assertEquals(taskStatusAfterUpdate.getName(), taskStatusResponseDto.getName());
+    }
+
+    @Test
+    public void deleteTaskStatusTest() throws Exception {
+        TaskStatus taskStatus = taskStatusRepository.findAll().get(0);
+        int countTaskStatusBeforeDelete = taskStatusRepository.findAll().size();
+        mockMvc.perform(MockMvcRequestBuilders.delete(baseUrl + "/statuses/" + taskStatus.getId())
+                .header(AUTHORIZATION, token)
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        int countTaskStatusAfterDelete = taskStatusRepository.findAll().size();
+
+        assertEquals(countTaskStatusBeforeDelete - 1, countTaskStatusAfterDelete);
+
+    }
+
 }
