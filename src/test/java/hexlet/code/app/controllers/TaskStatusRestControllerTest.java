@@ -64,7 +64,7 @@ public class TaskStatusRestControllerTest {
                 .content(objectMapper.writeValueAsString(loginRequestDto))).andReturn().getResponse();
         token = "Bearer " + response.getContentAsString();
 
-        // Создание лейбла
+        // Создание статуса
         TaskStatusRequestDto taskStatusRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_create_default_task_status.json").getFile(), TaskStatusRequestDto.class);
         mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/statuses")
                 .header(AUTHORIZATION, token)
@@ -73,7 +73,7 @@ public class TaskStatusRestControllerTest {
     }
 
     @AfterEach
-    public void clearLabel() {
+    public void clearData() {
         userRepository.deleteAll();
         taskStatusRepository.deleteAll();
     }
