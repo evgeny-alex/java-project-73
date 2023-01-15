@@ -1,6 +1,8 @@
 {
-  "name": "Новая задача",
-  "description": "Описание новой задачи",
+  "name": "Новая задача для теста",
+  "description": "Описание новой задачи для теста",
   "executorId": 1,
-  "taskStatusId": 1
+  "authorId": 1,
+  "taskStatusId": 3,
+  "labelIds": [2]
 }
