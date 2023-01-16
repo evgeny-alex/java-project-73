@@ -151,7 +151,6 @@ public class LabelRestControllerTest {
         int countLabelsAfterDelete = labelRepository.findAll().size();
 
         assertEquals(countLabelsBeforeDelete - 1, countLabelsAfterDelete);
-
     }
 
     // TODO: 23.11.2022 1.Доделать тесты для всех контроллеров 2. Swagger 3. Эксплуатация 4. Деплой

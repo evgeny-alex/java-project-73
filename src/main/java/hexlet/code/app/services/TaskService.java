@@ -96,7 +96,7 @@ public class TaskService {
      * @param taskDto - DTO задачи
      * @param id      - ID задачи
      */
-    public void updateTask(TaskRequestDto taskDto, Integer id) {
+    public Task updateTask(TaskRequestDto taskDto, Integer id) {
         Task task = taskRepository.getById(id);
 
         task.setName(taskDto.getName());
@@ -106,6 +106,8 @@ public class TaskService {
         task.setLabelList(taskDto.getLabelIds().stream().map(labelId -> labelService.getLabelById(labelId)).collect(Collectors.toList()));
 
         taskRepository.save(task);
+
+        return task;
     }
 
     /**

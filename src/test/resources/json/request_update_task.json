@@ -1,0 +1,8 @@
+{
+  "name": "Новая задача для теста обновления",
+  "description": "Описание новой задачи для теста обновления",
+  "executorId": 1,
+  "authorId": 1,
+  "taskStatusId": 3,
+  "labelIds": [2]
+}

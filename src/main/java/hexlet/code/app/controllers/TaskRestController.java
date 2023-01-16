@@ -60,12 +60,16 @@ public class TaskRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateTask(@RequestBody TaskRequestDto taskRequestDto, @PathVariable("id") String id) {
-        taskService.updateTask(taskRequestDto, Integer.parseInt(id));
-        return ResponseEntity.ok("Task successfully updated");
+    public ResponseEntity<TaskResponseDto> updateTask(@RequestBody TaskRequestDto taskRequestDto, @PathVariable("id") String id) {
+        Task task = taskService.updateTask(taskRequestDto, Integer.parseInt(id));
+        if (task != null) {
+            TaskResponseDto taskResponseDto = taskService.entityToResponseDto(task);
+            return ResponseEntity.ok(taskResponseDto);
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTask(@PathVariable("id") String id) {
         taskService.deleteTask(Integer.parseInt(id));
         return ResponseEntity.ok("Task successfully deleted");

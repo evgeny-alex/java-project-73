@@ -154,5 +154,42 @@ public class TaskRestControllerTest {
         assertEquals(taskRequestDto.getExecutorId(), taskResponseDto.getExecutor().getId());
     }
 
-    // TODO: 15.01.2023 Доделать остальные тесты
+    @Test
+    void updateTaskTest() throws Exception {
+        Task task = taskRepository.findAll().get(0);
+        TaskRequestDto taskRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_update_task.json").getFile(), TaskRequestDto.class);
+
+        var response = mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/tasks/" + task.getId())
+                        .header(AUTHORIZATION, token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(taskRequestDto))).andExpect(status().isOk())
+                .andReturn().getResponse();
+
+        Task taskAfterUpdate = taskRepository.getById(task.getId());
+
+        TaskResponseDto taskResponseDto = fromJson(response.getContentAsString(StandardCharsets.UTF_8), new TypeReference<>() {
+        });
+
+        assertEquals(taskAfterUpdate.getId(), taskResponseDto.getId());
+        assertEquals(taskAfterUpdate.getName(), taskResponseDto.getName());
+        assertEquals(taskAfterUpdate.getDescription(), taskResponseDto.getDescription());
+        assertEquals(taskAfterUpdate.getTaskStatus().getId(), taskResponseDto.getTaskStatus().getId());
+        assertEquals(taskAfterUpdate.getAuthor().getId(), taskResponseDto.getAuthor().getId());
+        assertEquals(taskAfterUpdate.getExecutor().getId(), taskResponseDto.getExecutor().getId());
+        assertEquals(taskAfterUpdate.getCreatedAt().getTime(), taskResponseDto.getCreatedAt().getTime());
+    }
+
+    @Test
+    void deleteTaskTest() throws Exception {
+        Task task = taskRepository.findAll().get(0);
+        long countTasksBeforeDelete = taskRepository.count();
+        mockMvc.perform(MockMvcRequestBuilders.delete(baseUrl + "/tasks/" + task.getId())
+                .header(AUTHORIZATION, token)
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
+        long countTasksAfterDelete = taskRepository.count();
+
+        assertEquals(countTasksBeforeDelete - 1, countTasksAfterDelete);
+    }
+
+    // TODO: 15.01.2023 поправить совместный прогон тестов
 }
