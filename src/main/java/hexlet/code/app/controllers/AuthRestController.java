@@ -6,6 +6,9 @@ import hexlet.code.app.dto.UserRequestDto;
 import hexlet.code.app.model.User;
 import hexlet.code.app.services.UserService;
 import hexlet.code.app.utils.JwtTokenUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,6 +37,11 @@ public class AuthRestController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Operation(summary = "Операция авторизации, получение токена")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Пользователь авторизован"),
+            @ApiResponse(responseCode = "401", description = "Пользователь неавторизован")
+    })
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginRequestDto loginRequestDto) {
         try {
