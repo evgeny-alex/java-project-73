@@ -3,6 +3,7 @@ package hexlet.code.app.controllers;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import hexlet.code.app.dto.*;
+import hexlet.code.app.model.Label;
 import hexlet.code.app.model.Task;
 import hexlet.code.app.repository.LabelRepository;
 import hexlet.code.app.repository.TaskRepository;
@@ -10,6 +11,7 @@ import hexlet.code.app.repository.TaskStatusRepository;
 import hexlet.code.app.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -22,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static hexlet.code.app.utils.TestUtils.baseUrl;
 import static hexlet.code.app.utils.TestUtils.fromJson;
@@ -61,9 +64,9 @@ public class TaskRestControllerTest {
     public void initData() throws Exception {
         // Создание пользователя
         UserRequestDto userRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_create_default_user.json").getFile(), UserRequestDto.class);
-        mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/users")
+        String newUserId = mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(userRequestDto)));
+                .content(objectMapper.writeValueAsString(userRequestDto))).andReturn().getResponse().getContentAsString();
         // Получение токена
         LoginRequestDto loginRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_login_default.json").getFile(), LoginRequestDto.class);
         var response = mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/login")
@@ -73,20 +76,27 @@ public class TaskRestControllerTest {
 
         // Создание лейбла
         LabelRequestDto labelRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_create_default_label.json").getFile(), LabelRequestDto.class);
-        mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/labels")
+        var responseLabel = mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/labels")
                 .header(AUTHORIZATION, token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(labelRequestDto))).andExpect(status().isOk());
+                .content(objectMapper.writeValueAsString(labelRequestDto))).andExpect(status().isOk()).andReturn().getResponse();
+        LabelResponseDto labelResponseDto = fromJson(responseLabel.getContentAsString(StandardCharsets.UTF_8), new TypeReference<>() {
+        });
 
         // Создание статуса
         TaskStatusRequestDto taskStatusRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_create_default_task_status.json").getFile(), TaskStatusRequestDto.class);
-        mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/statuses")
+        var responseTaskStatus = mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/statuses")
                 .header(AUTHORIZATION, token)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(taskStatusRequestDto))).andExpect(status().isOk());
+                .content(objectMapper.writeValueAsString(taskStatusRequestDto))).andExpect(status().isOk()).andReturn().getResponse();
+        TaskStatusResponseDto taskStatusResponseDto = fromJson(responseTaskStatus.getContentAsString(StandardCharsets.UTF_8), new TypeReference<>() {
+        });
 
         // Создание задачи
         TaskRequestDto taskRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_create_default_task.json").getFile(), TaskRequestDto.class);
+        taskRequestDto.setTaskStatusId(taskStatusResponseDto.getId());
+        taskRequestDto.setLabelIds(List.of(labelResponseDto.getId()));
+        taskRequestDto.setExecutorId(Integer.parseInt(newUserId));
         mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/tasks")
                 .header(AUTHORIZATION, token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -137,7 +147,12 @@ public class TaskRestControllerTest {
 
     @Test
     void createTaskTest() throws Exception {
+        Task task = taskRepository.findAll().get(0);
         TaskRequestDto taskRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_create_task.json").getFile(), TaskRequestDto.class);
+        taskRequestDto.setTaskStatusId(task.getTaskStatus().getId());
+        taskRequestDto.setAuthorId(task.getAuthor().getId());
+        taskRequestDto.setExecutorId(task.getExecutor().getId());
+        taskRequestDto.setLabelIds(task.getLabelList().stream().map(Label::getId).collect(Collectors.toList()));
         var response = mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/tasks")
                         .header(AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -158,6 +173,9 @@ public class TaskRestControllerTest {
     void updateTaskTest() throws Exception {
         Task task = taskRepository.findAll().get(0);
         TaskRequestDto taskRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_update_task.json").getFile(), TaskRequestDto.class);
+        taskRequestDto.setTaskStatusId(task.getTaskStatus().getId());
+        taskRequestDto.setExecutorId(task.getExecutor().getId());
+        taskRequestDto.setLabelIds(task.getLabelList().stream().map(Label::getId).collect(Collectors.toList()));
 
         var response = mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/tasks/" + task.getId())
                         .header(AUTHORIZATION, token)
@@ -190,6 +208,4 @@ public class TaskRestControllerTest {
 
         assertEquals(countTasksBeforeDelete - 1, countTasksAfterDelete);
     }
-
-    // TODO: 15.01.2023 поправить совместный прогон тестов
 }

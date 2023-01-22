@@ -153,5 +153,5 @@ public class LabelRestControllerTest {
         assertEquals(countLabelsBeforeDelete - 1, countLabelsAfterDelete);
     }
 
-    // TODO: 23.11.2022 1.Доделать тесты для всех контроллеров 2. Swagger 3. Эксплуатация 4. Деплой
+    // TODO: 23.11.2022 3. Эксплуатация 4. Деплой
 }

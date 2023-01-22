@@ -29,7 +29,7 @@ public class UserRestController {
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody UserRequestDto userDto) {
         Integer id = userService.createUser(userDto);
-        return ResponseEntity.ok("User successfully created with id = " + id);
+        return ResponseEntity.ok(String.valueOf(id));
     }
 
     @Operation(summary = "Операция получения пользователя")
