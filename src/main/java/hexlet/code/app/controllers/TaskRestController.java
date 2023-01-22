@@ -8,6 +8,9 @@ import hexlet.code.app.model.User;
 import hexlet.code.app.services.TaskService;
 import hexlet.code.app.services.TaskStatusService;
 import hexlet.code.app.services.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +36,11 @@ public class TaskRestController {
     @Autowired
     private TaskStatusService taskStatusService;
 
+    @Operation(summary = "Операция создания задачи")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Задача успешно создана"),
+            @ApiResponse(responseCode = "500", description = "Произошла ошибка при создании задачи")
+    })
     @PostMapping
     public ResponseEntity<TaskResponseDto> createTask(@RequestBody TaskRequestDto taskRequestDto) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -49,6 +57,11 @@ public class TaskRestController {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 
+    @Operation(summary = "Операция получения задачи")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Возвращен DTO задачи"),
+            @ApiResponse(responseCode = "500", description = "Произошла ошибка при получении задачи")
+    })
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDto> getTask(@PathVariable("id") String id) {
         Task task = taskService.getTaskById(Integer.parseInt(id));
@@ -59,6 +72,11 @@ public class TaskRestController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @Operation(summary = "Операция обновления задачи")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Задача успешно обновлена"),
+            @ApiResponse(responseCode = "500", description = "Произошла ошибка при обновлении задачи")
+    })
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTask(@RequestBody TaskRequestDto taskRequestDto, @PathVariable("id") String id) {
         Task task = taskService.updateTask(taskRequestDto, Integer.parseInt(id));
@@ -69,12 +87,22 @@ public class TaskRestController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @Operation(summary = "Операция удаления задачи")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Задача успешно удалена"),
+            @ApiResponse(responseCode = "500", description = "Произошла ошибка при удалении задачи")
+    })
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTask(@PathVariable("id") String id) {
         taskService.deleteTask(Integer.parseInt(id));
         return ResponseEntity.ok("Task successfully deleted");
     }
 
+    @Operation(summary = "Операция фильтрации задач")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Получен отфильтрованный список задач"),
+            @ApiResponse(responseCode = "500", description = "Произошла ошибка при фильтрации задач")
+    })
     @GetMapping
     public ResponseEntity<List<TaskResponseDto>> filterTasks(@RequestParam(required = false) Integer taskStatus,
                                                       @RequestParam(required = false) Integer executorId,
