@@ -1,5 +1,6 @@
 package hexlet.code.app.controllers;
 
+import com.rollbar.notifier.Rollbar;
 import hexlet.code.app.dto.TaskRequestDto;
 import hexlet.code.app.dto.TaskResponseDto;
 import hexlet.code.app.dto.TaskSearchCriteria;
@@ -36,6 +37,9 @@ public class TaskRestController {
     @Autowired
     private TaskStatusService taskStatusService;
 
+    @Autowired
+    private Rollbar rollbar;
+
     @Operation(summary = "Операция создания задачи")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Задача успешно создана"),
@@ -54,6 +58,7 @@ public class TaskRestController {
             TaskResponseDto taskResponseDto = taskService.entityToResponseDto(task);
             return ResponseEntity.ok(taskResponseDto);
         }
+        rollbar.error("Произошла ошибка при создании задачи.");
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 
@@ -69,6 +74,7 @@ public class TaskRestController {
             TaskResponseDto taskResponseDto = taskService.entityToResponseDto(task);
             return ResponseEntity.ok(taskResponseDto);
         }
+        rollbar.error("Произошла ошибка при получении задачи с ID = " + id);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -84,6 +90,7 @@ public class TaskRestController {
             TaskResponseDto taskResponseDto = taskService.entityToResponseDto(task);
             return ResponseEntity.ok(taskResponseDto);
         }
+        rollbar.error("Произошла ошибка при обновлении задачи с ID = " + id);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

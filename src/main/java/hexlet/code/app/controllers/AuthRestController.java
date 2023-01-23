@@ -1,6 +1,7 @@
 package hexlet.code.app.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.rollbar.notifier.Rollbar;
 import hexlet.code.app.dto.LoginRequestDto;
 import hexlet.code.app.dto.UserRequestDto;
 import hexlet.code.app.model.User;
@@ -37,6 +38,9 @@ public class AuthRestController {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private Rollbar rollbar;
+
     @Operation(summary = "Операция авторизации, получение токена")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Пользователь авторизован"),
@@ -56,6 +60,7 @@ public class AuthRestController {
 
             return ResponseEntity.ok().body(jwtTokenUtil.generateToken(user));
         } catch (BadCredentialsException ex) {
+            rollbar.error(ex.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
     }

@@ -1,5 +1,6 @@
 package hexlet.code.app.controllers;
 
+import com.rollbar.notifier.Rollbar;
 import hexlet.code.app.dto.TaskStatusRequestDto;
 import hexlet.code.app.dto.TaskStatusResponseDto;
 import hexlet.code.app.model.TaskStatus;
@@ -21,6 +22,9 @@ public class TaskStatusRestController {
     @Autowired
     private TaskStatusService taskStatusService;
 
+    @Autowired
+    private Rollbar rollbar;
+
     @Operation(summary = "Операция получения статуса задачи")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Статус задачи успешно получен"),
@@ -33,6 +37,7 @@ public class TaskStatusRestController {
             TaskStatusResponseDto taskStatusResponseDto = taskStatusService.entityToResponseDto(taskStatus);
             return ResponseEntity.ok(taskStatusResponseDto);
         }
+        rollbar.error("Произошла ошибка при получении статуса задачи с ID = " + id);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -62,6 +67,7 @@ public class TaskStatusRestController {
             TaskStatusResponseDto taskStatusResponseDto = taskStatusService.entityToResponseDto(taskStatus);
             return ResponseEntity.ok(taskStatusResponseDto);
         }
+        rollbar.error("Произошла ошибка при создании статуса задачи.");
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -77,6 +83,7 @@ public class TaskStatusRestController {
             TaskStatusResponseDto taskStatusResponseDto = taskStatusService.entityToResponseDto(taskStatus);
             return ResponseEntity.ok(taskStatusResponseDto);
         }
+        rollbar.error("Произошла ошибка при обновлении статуса задачи с ID = " + id);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

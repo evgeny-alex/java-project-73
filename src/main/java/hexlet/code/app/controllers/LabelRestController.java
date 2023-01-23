@@ -1,5 +1,6 @@
 package hexlet.code.app.controllers;
 
+import com.rollbar.notifier.Rollbar;
 import hexlet.code.app.dto.LabelRequestDto;
 import hexlet.code.app.dto.LabelResponseDto;
 import hexlet.code.app.model.Label;
@@ -21,6 +22,9 @@ public class LabelRestController {
     @Autowired
     private LabelService labelService;
 
+    @Autowired
+    private Rollbar rollbar;
+
     @Operation(summary = "Операция создания метки")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Метка успешно создана"),
@@ -33,6 +37,7 @@ public class LabelRestController {
             LabelResponseDto labelResponseDto = labelService.entityToResponseDto(label);
             return ResponseEntity.ok(labelResponseDto);
         }
+        rollbar.error("Произошла ошибка при создании метки.");
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -48,6 +53,7 @@ public class LabelRestController {
             LabelResponseDto labelResponseDto = labelService.entityToResponseDto(label);
             return ResponseEntity.ok(labelResponseDto);
         }
+        rollbar.error("Произошла ошибка при получении метки по ID.");
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -77,6 +83,7 @@ public class LabelRestController {
             LabelResponseDto labelResponseDto = labelService.entityToResponseDto(label);
             return ResponseEntity.ok(labelResponseDto);
         }
+        rollbar.error("Произошла ошибка при обновлении метки с ID = " + id);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

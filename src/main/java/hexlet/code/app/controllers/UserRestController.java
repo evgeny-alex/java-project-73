@@ -1,5 +1,6 @@
 package hexlet.code.app.controllers;
 
+import com.rollbar.notifier.Rollbar;
 import hexlet.code.app.dto.UserRequestDto;
 import hexlet.code.app.dto.UserResponseDto;
 import hexlet.code.app.model.User;
@@ -20,6 +21,9 @@ public class UserRestController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private Rollbar rollbar;
 
     @Operation(summary = "Операция создания пользователя")
     @ApiResponses(value = {
@@ -44,6 +48,7 @@ public class UserRestController {
             UserResponseDto userResponseDto = userService.entityToResponseDto(user);
             return ResponseEntity.ok(userResponseDto);
         }
+        rollbar.error("Произошла ошибка при получении пользователя по ID = " + id);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
