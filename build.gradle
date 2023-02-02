@@ -155,8 +155,8 @@ processResources.dependsOn assembleFrontend
 
 
 // Таска нужная heroku для деплоя
-task stage(dependsOn: [clean, installDist])
-installDist.mustRunAfter clean
+//task stage(dependsOn: [clean, installDist])
+//installDist.mustRunAfter clean
 
 tasks.withType(Jar) {
 	destinationDir = file("$rootDir/build/lib")
