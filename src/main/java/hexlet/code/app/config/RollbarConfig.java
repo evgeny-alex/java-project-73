@@ -10,7 +10,7 @@ import static com.rollbar.spring.webmvc.RollbarSpringConfigBuilder.withAccessTok
 @Configuration
 public class RollbarConfig {
 
-    @Value("${ROLLBAR_TOKEN}")
+//    @Value("${ROLLBAR_TOKEN}")
     private String rollbarToken;
 
     @Bean
