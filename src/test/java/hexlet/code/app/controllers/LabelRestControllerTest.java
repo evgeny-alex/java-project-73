@@ -153,5 +153,5 @@ public class LabelRestControllerTest {
         assertEquals(countLabelsBeforeDelete - 1, countLabelsAfterDelete);
     }
 
-    // TODO: 23.11.2022 1. Деплой 2. Подключить роллбар 3. Исправить контроллер 4. Исправить все предупреждения checkStyle
+    // TODO: 23.11.2022 2. Протестировать роллбар 3. Исправить контроллер + Querydsl 4. Исправить все предупреждения checkStyle
 }
