@@ -37,7 +37,7 @@ public class LabelService {
      * @param id - ID метки
      * @return - сущность метки
      */
-    public Label getLabelById(Integer id) {
+    public Label getLabelById(Long id) {
         return labelRepository.getById(id);
     }
 
@@ -56,7 +56,7 @@ public class LabelService {
      * @param labelRequestDto - DTO метки для обновления
      * @param id - ID метки
      */
-    public Label updateLabel(LabelRequestDto labelRequestDto, Integer id) {
+    public Label updateLabel(LabelRequestDto labelRequestDto, Long id) {
         Label label = labelRepository.getById(id);
 
         label.setName(labelRequestDto.getName());
@@ -71,7 +71,7 @@ public class LabelService {
      *
      * @param id - ID метки
      */
-    public void deleteLabel(Integer id) {
+    public void deleteLabel(Long id) {
         labelRepository.deleteById(id);
     }
 

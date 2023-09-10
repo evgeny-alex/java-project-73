@@ -9,7 +9,7 @@ import java.util.Date;
 @Setter
 public class TaskStatusResponseDto {
 
-    private Integer id;
+    private Long id;
 
     private String name;
 

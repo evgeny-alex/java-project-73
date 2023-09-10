@@ -21,7 +21,7 @@ public class TaskStatusService {
      * @param id - идентификатор статуса задачи
      * @return - сущности статуса задачи
      */
-    public TaskStatus getTaskStatusById(Integer id) {
+    public TaskStatus getTaskStatusById(Long id) {
         return taskStatusRepository.getById(id);
     }
 
@@ -55,7 +55,7 @@ public class TaskStatusService {
      *
      * @param taskStatusRequestDto - DTO для обновления нового статус задачb
      */
-    public TaskStatus updateTaskStatus(TaskStatusRequestDto taskStatusRequestDto, Integer id) {
+    public TaskStatus updateTaskStatus(TaskStatusRequestDto taskStatusRequestDto, Long id) {
         TaskStatus taskStatus = taskStatusRepository.getById(id);
 
         taskStatus.setName(taskStatusRequestDto.getName());
@@ -70,7 +70,7 @@ public class TaskStatusService {
      *
      * @param id - ID задачи для удаления
      */
-    public void deleteTaskStatus(Integer id) {
+    public void deleteTaskStatus(Long id) {
         taskStatusRepository.deleteById(id);
     }
 

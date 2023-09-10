@@ -1,11 +1,12 @@
 package hexlet.code.app.controllers;
 
+import com.querydsl.core.types.Predicate;
 import com.rollbar.notifier.Rollbar;
 import hexlet.code.app.dto.TaskRequestDto;
 import hexlet.code.app.dto.TaskResponseDto;
-import hexlet.code.app.dto.TaskSearchCriteria;
 import hexlet.code.app.model.Task;
 import hexlet.code.app.model.User;
+import hexlet.code.app.repository.TaskRepository;
 import hexlet.code.app.services.TaskService;
 import hexlet.code.app.services.TaskStatusService;
 import hexlet.code.app.services.UserService;
@@ -13,16 +14,14 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.querydsl.binding.QuerydslPredicate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/tasks")
@@ -30,6 +29,9 @@ public class TaskRestController {
 
     @Autowired
     private TaskService taskService;
+
+    @Autowired
+    private TaskRepository taskRepository;
 
     @Autowired
     private UserService userService;
@@ -51,15 +53,15 @@ public class TaskRestController {
         if (auth == null) {
             return null;
         }
-        Object principal = auth.getPrincipal();
-        User user = (principal instanceof User) ? (User) principal : null;
+        User user = userService.getCurrentUser();
         if (user != null) {
             Task task = taskService.createTask(taskRequestDto, user.getId());
             TaskResponseDto taskResponseDto = taskService.entityToResponseDto(task);
             return ResponseEntity.ok(taskResponseDto);
+        } else {
+            rollbar.error("Произошла ошибка при создании задачи.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
-        rollbar.error("Произошла ошибка при создании задачи.");
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
     }
 
     @Operation(summary = "Операция получения задачи")
@@ -69,13 +71,14 @@ public class TaskRestController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<TaskResponseDto> getTask(@PathVariable("id") String id) {
-        Task task = taskService.getTaskById(Integer.parseInt(id));
+        Task task = taskService.getTaskById(Long.parseLong(id));
         if (task != null) {
             TaskResponseDto taskResponseDto = taskService.entityToResponseDto(task);
             return ResponseEntity.ok(taskResponseDto);
+        } else {
+            rollbar.error("Произошла ошибка при получении задачи с ID = " + id);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        rollbar.error("Произошла ошибка при получении задачи с ID = " + id);
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Operation(summary = "Операция обновления задачи")
@@ -85,7 +88,7 @@ public class TaskRestController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<TaskResponseDto> updateTask(@RequestBody TaskRequestDto taskRequestDto, @PathVariable("id") String id) {
-        Task task = taskService.updateTask(taskRequestDto, Integer.parseInt(id));
+        Task task = taskService.updateTask(taskRequestDto, Long.parseLong(id));
         if (task != null) {
             TaskResponseDto taskResponseDto = taskService.entityToResponseDto(task);
             return ResponseEntity.ok(taskResponseDto);
@@ -101,7 +104,7 @@ public class TaskRestController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTask(@PathVariable("id") String id) {
-        taskService.deleteTask(Integer.parseInt(id));
+        taskService.deleteTask(Long.parseLong(id));
         return ResponseEntity.ok("Task successfully deleted");
     }
 
@@ -111,15 +114,7 @@ public class TaskRestController {
             @ApiResponse(responseCode = "500", description = "Произошла ошибка при фильтрации задач")
     })
     @GetMapping
-    public ResponseEntity<List<TaskResponseDto>> filterTasks(@RequestParam(required = false) Integer taskStatus,
-                                                      @RequestParam(required = false) Integer executorId,
-                                                      @RequestParam(required = false) Integer labels,
-                                                      @RequestParam(required = false) Integer authorId) {
-        List<Task> taskList = taskService.findWithSearchCriteria(new TaskSearchCriteria(taskStatus, executorId, labels, authorId));
-        List<TaskResponseDto> taskResponseDtoList = new ArrayList<>();
-        if (!CollectionUtils.isEmpty(taskList)) {
-            taskResponseDtoList = taskList.stream().map(task -> taskService.entityToResponseDto(task)).toList();
-        }
-        return ResponseEntity.ok(taskResponseDtoList);
+    public List<Task> getAllTasks(@QuerydslPredicate final Predicate predicate) {
+        return predicate == null ? taskRepository.findAll() : (List<Task>) taskRepository.findAll(predicate);
     }
 }

@@ -9,7 +9,7 @@ import java.util.Date;
 @Setter
 public class TaskResponseDto {
 
-    private Integer id;
+    private Long id;
 
     private String name;
 

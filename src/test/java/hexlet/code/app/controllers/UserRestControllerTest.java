@@ -86,7 +86,7 @@ public class UserRestControllerTest {
                         .content(objectMapper.writeValueAsString(userRequestDto)))
                 .andExpect(status().isOk());
 
-        User expectedUser = userRepository.getByEmail(userRequestDto.getEmail());
+        User expectedUser = userRepository.findByEmail(userRequestDto.getEmail()).get();
 
         assertEquals(expectedUser.getEmail(), userRequestDto.getEmail());
         assertEquals(expectedUser.getLastName(), userRequestDto.getLastName());
@@ -96,7 +96,7 @@ public class UserRestControllerTest {
     @Test
     public void updateUserTest() throws Exception {
         UserRequestDto userRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_update_user.json").getFile(), UserRequestDto.class);
-        User expectedUserAfter = userRepository.getByEmail(DEFAULT_EMAIL);
+        User expectedUserAfter = userRepository.findByEmail(DEFAULT_EMAIL).get();
         mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/users/" + expectedUserAfter.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequestDto)))
@@ -109,7 +109,7 @@ public class UserRestControllerTest {
 
     @Test
     public void deleteUserTest() throws Exception {
-        User expectedUser = userRepository.getByEmail(DEFAULT_EMAIL);
+        User expectedUser = userRepository.findByEmail(DEFAULT_EMAIL).get();
         mockMvc.perform(MockMvcRequestBuilders.delete(baseUrl + "/users/" + expectedUser.getId()))
                 .andExpect(status().isOk());
     }

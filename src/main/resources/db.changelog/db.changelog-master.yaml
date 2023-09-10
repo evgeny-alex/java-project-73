@@ -56,19 +56,36 @@ databaseChangeLog:
             tablespace:  A String
             validate:  true
   - changeSet:
-      id: createSequence
+      id: create-labels_SEQ
       author: eaa
       changes:
         - createSequence:
-            cacheSize: 371717
-            cycle: true
-            dataType: int
-            incrementBy: 1
-            maxValue: 1000
-            minValue: 1
-            ordered: true
-            schemaName: public
-            sequenceName: HIBERNATE_SEQUENCE
+            incrementBy: 50
+            sequenceName: labels_SEQ
+            startValue: 1
+  - changeSet:
+      id: create-task_statuses_SEQ
+      author: eaa
+      changes:
+        - createSequence:
+            incrementBy: 50
+            sequenceName: task_statuses_SEQ
+            startValue: 1
+  - changeSet:
+      id: create-tasks_SEQ
+      author: eaa
+      changes:
+        - createSequence:
+            incrementBy: 50
+            sequenceName: tasks_SEQ
+            startValue: 1
+  - changeSet:
+      id: create-users_SEQ
+      author: eaa
+      changes:
+        - createSequence:
+            incrementBy: 50
+            sequenceName: users_SEQ
             startValue: 1
   - changeSet:
       id: createTable-TaskStatuses
@@ -89,7 +106,7 @@ databaseChangeLog:
                   type: timestamp
             remarks: A String
             schemaName: public
-            tableName: taskstatuses
+            tableName: task_statuses
             tablespace: Task statuses table space
   - changeSet:
       id: addPrimaryKey-TaskStatuses
@@ -99,7 +116,7 @@ databaseChangeLog:
             columnNames: id
             constraintName: pk_taskstatuses
             schemaName: public
-            tableName: taskstatuses
+            tableName: task_statuses
             tablespace: Users table space
             validate: true
   - changeSet:
@@ -122,17 +139,17 @@ databaseChangeLog:
                   name: description
                   type: varchar(255)
               - column:
-                  name: task_status
+                  name: task_status_id
                   type: integer
                   constraints:
                     - nullable: false
               - column:
-                  name: author
+                  name: author_id
                   type: integer
                   constraints:
                     - nullable: false
               - column:
-                  name: executor
+                  name: executor_id
                   type: integer
               - column:
                   name: created_at
@@ -157,20 +174,20 @@ databaseChangeLog:
       author: eaa
       changes:
         - addForeignKeyConstraint:
-            baseColumnNames: task_status
+            baseColumnNames: task_status_id
             baseTableName: tasks
             baseTableSchemaName: public
             constraintName: fk_tasks_taskstatuses
             onUpdate: RESTRICT
             referencedColumnNames: id
-            referencedTableName: taskstatuses
+            referencedTableName: task_statuses
             referencedTableSchemaName: public
   - changeSet:
       id: addForeignKeyConstraint-TaskAuthor
       author: eaa
       changes:
         - addForeignKeyConstraint:
-            baseColumnNames: author
+            baseColumnNames: author_id
             baseTableName: tasks
             baseTableSchemaName: public
             constraintName: fk_tasks_author
@@ -184,7 +201,7 @@ databaseChangeLog:
       author: eaa
       changes:
         - addForeignKeyConstraint:
-            baseColumnNames: executor
+            baseColumnNames: executor_id
             baseTableName: tasks
             baseTableSchemaName: public
             constraintName: fk_tasks_executor
@@ -234,7 +251,7 @@ databaseChangeLog:
         - createTable:
             columns:
               - column:
-                  name: label_id
+                  name: labels_id
                   type: integer
                   constraints:
                     - nullable: false
@@ -245,15 +262,15 @@ databaseChangeLog:
                     - nullable: false
             remarks: A String
             schemaName: public
-            tableName: labels_tasks
+            tableName: TASKS_LABELS
             tablespace: Label table space
   - changeSet:
       id: addForeignKeyConstraint-FK_LABELS_TASKS_LABELS
       author: eaa
       changes:
         - addForeignKeyConstraint:
-            baseColumnNames: label_id
-            baseTableName: labels_tasks
+            baseColumnNames: labels_id
+            baseTableName: TASKS_LABELS
             baseTableSchemaName: public
             constraintName: fk_labels_tasks_labels
             onDelete: RESTRICT

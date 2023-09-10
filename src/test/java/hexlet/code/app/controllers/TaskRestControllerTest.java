@@ -24,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static hexlet.code.app.utils.TestUtils.baseUrl;
@@ -95,8 +96,8 @@ public class TaskRestControllerTest {
         // Создание задачи
         TaskRequestDto taskRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_create_default_task.json").getFile(), TaskRequestDto.class);
         taskRequestDto.setTaskStatusId(taskStatusResponseDto.getId());
-        taskRequestDto.setLabelIds(List.of(labelResponseDto.getId()));
-        taskRequestDto.setExecutorId(Integer.parseInt(newUserId));
+        taskRequestDto.setLabelIds(Set.of(labelResponseDto.getId()));
+        taskRequestDto.setExecutorId(Long.parseLong(newUserId));
         mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/tasks")
                 .header(AUTHORIZATION, token)
                 .contentType(MediaType.APPLICATION_JSON)
@@ -152,7 +153,7 @@ public class TaskRestControllerTest {
         taskRequestDto.setTaskStatusId(task.getTaskStatus().getId());
         taskRequestDto.setAuthorId(task.getAuthor().getId());
         taskRequestDto.setExecutorId(task.getExecutor().getId());
-        taskRequestDto.setLabelIds(task.getLabelList().stream().map(Label::getId).collect(Collectors.toList()));
+        taskRequestDto.setLabelIds(task.getLabels().stream().map(Label::getId).collect(Collectors.toSet()));
         var response = mockMvc.perform(MockMvcRequestBuilders.post(baseUrl + "/tasks")
                         .header(AUTHORIZATION, token)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -175,7 +176,7 @@ public class TaskRestControllerTest {
         TaskRequestDto taskRequestDto = objectMapper.readValue(resourceLoader.getResource("classpath:json/request_update_task.json").getFile(), TaskRequestDto.class);
         taskRequestDto.setTaskStatusId(task.getTaskStatus().getId());
         taskRequestDto.setExecutorId(task.getExecutor().getId());
-        taskRequestDto.setLabelIds(task.getLabelList().stream().map(Label::getId).collect(Collectors.toList()));
+        taskRequestDto.setLabelIds(task.getLabels().stream().map(Label::getId).collect(Collectors.toSet()));
 
         var response = mockMvc.perform(MockMvcRequestBuilders.put(baseUrl + "/tasks/" + task.getId())
                         .header(AUTHORIZATION, token)

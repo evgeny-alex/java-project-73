@@ -3,7 +3,7 @@ package hexlet.code.app.dto;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -13,11 +13,11 @@ public class TaskRequestDto {
 
     private String description;
 
-    private Integer taskStatusId;
+    private Long taskStatusId;
 
-    private Integer authorId;
+    private Long authorId;
 
-    private Integer executorId;
+    private Long executorId;
 
-    private List<Integer> labelIds;
+    private Set<Long> labelIds;
 }

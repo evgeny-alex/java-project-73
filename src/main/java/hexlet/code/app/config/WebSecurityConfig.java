@@ -1,48 +1,69 @@
 package hexlet.code.app.config;
 
 import hexlet.code.app.filter.JwtTokenFilter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.BeanIds;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.util.matcher.NegatedRequestMatcher;
+import org.springframework.security.web.util.matcher.OrRequestMatcher;
+import org.springframework.security.web.util.matcher.RequestMatcher;
+import java.util.List;
 
+import static hexlet.code.app.controllers.UserRestController.USER_CONTROLLER_PATH;
+import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+
+@Configuration
 @EnableWebSecurity
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity(prePostEnabled = true)
+@RequiredArgsConstructor
+public class WebSecurityConfig {
+    public static final List<GrantedAuthority> DEFAULT_AUTHORITIES = List.of(new SimpleGrantedAuthority("USER"));
+    public static final String LOGIN = "/login";
 
-    @Autowired
-    private UserDetailsService userDetailsService;
+    @Value("${base-url}")
+    private String baseUrl;
 
-    @Autowired
-    private JwtTokenFilter jwtTokenFilter;
+    private final JwtTokenFilter jwtTokenFilter;
 
-    // Переопределяем схему аутентификации
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http    .csrf()
-                .disable()
-                .authorizeRequests()
-                .antMatchers("/api/auth/").permitAll()
-                .antMatchers("/api/login/").permitAll()
-                .antMatchers("/api/users/").permitAll()
-                .antMatchers("/api/statuses").authenticated()
-                .antMatchers("/api/tasks").authenticated()
-                .antMatchers("/api/labels").authenticated()
-                .antMatchers("/api/labels/").authenticated()
-                .and().exceptionHandling()
-                .and().addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-        http.csrf().disable();
-        http.headers().frameOptions().disable();
+    private final UserDetailsService userDetailsService;
+
+    private RequestMatcher loginRequest = new AntPathRequestMatcher(baseUrl + LOGIN, POST.toString());
+    private RequestMatcher publicUrls = new OrRequestMatcher(
+            loginRequest,
+            new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, POST.toString()),
+            new AntPathRequestMatcher(baseUrl + USER_CONTROLLER_PATH, GET.toString()),
+            new NegatedRequestMatcher(new AntPathRequestMatcher(baseUrl + "/**")));
+
+
+    @Bean
+    public DaoAuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+
+        authProvider.setUserDetailsService(userDetailsService);
+        authProvider.setPasswordEncoder(passwordEncoder());
+
+        return authProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 
     @Bean
@@ -50,18 +71,19 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userDetailsService);
-    }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return super.userDetailsService();
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeHttpRequests()
+                .requestMatchers(publicUrls).permitAll()
+                .anyRequest().authenticated().and()
+                .addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .formLogin().disable()
+                .sessionManagement().disable()
+                .logout().disable();
+
+        return http.build();
     }
 }

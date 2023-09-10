@@ -1,57 +1,52 @@
 package hexlet.code.app.model;
 
-import lombok.Data;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Fetch;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
-import static javax.persistence.GenerationType.AUTO;
-import static javax.persistence.TemporalType.TIMESTAMP;
+import static jakarta.persistence.GenerationType.AUTO;
+import static jakarta.persistence.TemporalType.TIMESTAMP;
+import static org.hibernate.annotations.FetchMode.JOIN;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Table(name = "tasks")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Task {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = AUTO)
-    private Integer id;
-
-    @Column(name = "name", unique = true)
-    @Size(min = 3, max = 1_000)
-    private String name;
-
-    @Column(name = "description")
-    @Size(min = 3, max = 1_000)
-    private String description;
+    private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "task_status")
-    private TaskStatus taskStatus;
-
-    @ManyToOne
-    @JoinColumn(name = "author")
     private User author;
 
     @ManyToOne
-    @JoinColumn(name = "executor")
     private User executor;
+
+    @ManyToOne
+    private TaskStatus taskStatus;
+
+    @ManyToMany
+    @Fetch(JOIN)
+    private Set<Label> labels;
+
+    @NotBlank
+    @Size(min = 3, max = 1000)
+    private String name;
+
+    private String description;
 
     @CreationTimestamp
     @Temporal(TIMESTAMP)
-    @Column(name = "created_at")
     private Date createdAt;
-
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(name = "labels_tasks",
-            joinColumns = @JoinColumn(name = "task_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "label_id", referencedColumnName = "id"))
-    private List<Label> labelList;
-//    Если пользователь связан хотя бы с одной задачей, его нельзя удалить - пока идея сделать это на уровне сервиса
-//    Если статус связан хотя бы с одной задачей, его нельзя удалить
-
 }

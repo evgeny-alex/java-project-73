@@ -5,16 +5,14 @@ import hexlet.code.app.dto.UserResponseDto;
 import hexlet.code.app.model.User;
 import hexlet.code.app.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class UserService implements UserDetailsService {
+public class UserService {
 
     @Autowired
     private UserRepository userRepository;
@@ -28,7 +26,7 @@ public class UserService implements UserDetailsService {
      * @param userRequestDto - DTO пользователя
      * @return - Строка с ID пользователя
      */
-    public Integer createUser(UserRequestDto userRequestDto) {
+    public Long createUser(UserRequestDto userRequestDto) {
         User user = new User();
 
         user.setFirstName(userRequestDto.getFirstName());
@@ -47,7 +45,7 @@ public class UserService implements UserDetailsService {
      * @param id - ID пользователя
      * @return - сущность пользователя
      */
-    public User getUserById(Integer id) {
+    public User getUserById(Long id) {
         return userRepository.getById(id);
     }
 
@@ -66,7 +64,7 @@ public class UserService implements UserDetailsService {
      * @param userRequestDto - DTO пользователя
      * @param id - ID пользователя
      */
-    public void updateUser(UserRequestDto userRequestDto, Integer id) {
+    public void updateUser(UserRequestDto userRequestDto, Long id) {
         User user = userRepository.getById(id);
 
         user.setFirstName(userRequestDto.getFirstName());
@@ -82,13 +80,8 @@ public class UserService implements UserDetailsService {
      *
      * @param id - ID пользователя
      */
-    public void deleteUser(Integer id) {
+    public void deleteUser(Long id) {
         userRepository.deleteById(id);
-    }
-
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.getByEmail(username);
     }
 
     /**
@@ -108,4 +101,13 @@ public class UserService implements UserDetailsService {
 
         return userResponseDto;
     }
+
+    public String getCurrentUserEmail() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    public User getCurrentUser() {
+        return userRepository.findByEmail(getCurrentUserEmail()).get();
+    }
+
 }

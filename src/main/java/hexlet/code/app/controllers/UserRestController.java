@@ -15,9 +15,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+import static hexlet.code.app.controllers.UserRestController.USER_CONTROLLER_PATH;
+
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("${base-url:/api}" + USER_CONTROLLER_PATH)
 public class UserRestController {
+
+    public static final String USER_CONTROLLER_PATH = "/users";
 
     @Autowired
     private UserService userService;
@@ -32,7 +36,7 @@ public class UserRestController {
     })
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody UserRequestDto userDto) {
-        Integer id = userService.createUser(userDto);
+        Long id = userService.createUser(userDto);
         return ResponseEntity.ok(String.valueOf(id));
     }
 
@@ -43,7 +47,7 @@ public class UserRestController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable("id") String id) {
-        User user = userService.getUserById(Integer.parseInt(id));
+        User user = userService.getUserById(Long.parseLong(id));
         if (user != null) {
             UserResponseDto userResponseDto = userService.entityToResponseDto(user);
             return ResponseEntity.ok(userResponseDto);
@@ -73,7 +77,7 @@ public class UserRestController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<String> updateUser(@RequestBody UserRequestDto userDto, @PathVariable("id") String id) {
-        userService.updateUser(userDto, Integer.parseInt(id));
+        userService.updateUser(userDto, Long.parseLong(id));
         return ResponseEntity.ok("User successfully updated");
     }
 
@@ -84,7 +88,7 @@ public class UserRestController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable("id") String id) {
-        userService.deleteUser(Integer.parseInt(id));
+        userService.deleteUser(Long.parseLong(id));
         return ResponseEntity.ok("User successfully deleted");
     }
 }

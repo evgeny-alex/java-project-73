@@ -1,31 +1,48 @@
 package hexlet.code.app.model;
 
-import lombok.Data;
+import java.util.Date;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
-import javax.validation.constraints.Size;
-import java.util.Date;
-
-import static javax.persistence.GenerationType.AUTO;
-import static javax.persistence.TemporalType.TIMESTAMP;
+import static jakarta.persistence.GenerationType.AUTO;
+import static jakarta.persistence.TemporalType.TIMESTAMP;
 
 @Entity
-@Data
-@Table(name = "taskstatuses")
+@Getter
+@Setter
+@Table(name = "task_statuses")
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TaskStatus {
 
     @Id
-    @Column(name = "id")
     @GeneratedValue(strategy = AUTO)
-    private Integer id;
+    private Long id;
 
-    @Column(name = "name", unique = true)
+    @NotBlank
     @Size(min = 3, max = 1_000)
+    @Column(unique = true)
     private String name;
 
     @CreationTimestamp
     @Temporal(TIMESTAMP)
-    @Column(name = "created_at")
     private Date createdAt;
+
+    public TaskStatus(final Long id) {
+        this.id = id;
+    }
 }
+

@@ -32,7 +32,7 @@ public class TaskStatusRestController {
     })
     @GetMapping("/{id}")
     public ResponseEntity<TaskStatusResponseDto> getStatus(@PathVariable("id") String id) {
-        TaskStatus taskStatus = taskStatusService.getTaskStatusById(Integer.parseInt(id));
+        TaskStatus taskStatus = taskStatusService.getTaskStatusById(Long.parseLong(id));
         if (taskStatus != null) {
             TaskStatusResponseDto taskStatusResponseDto = taskStatusService.entityToResponseDto(taskStatus);
             return ResponseEntity.ok(taskStatusResponseDto);
@@ -78,7 +78,7 @@ public class TaskStatusRestController {
     })
     @PutMapping("/{id}")
     public ResponseEntity<TaskStatusResponseDto> updateTaskStatus(@RequestBody TaskStatusRequestDto taskStatusRequestDto, @PathVariable("id") String id) {
-        TaskStatus taskStatus = taskStatusService.updateTaskStatus(taskStatusRequestDto, Integer.parseInt(id));
+        TaskStatus taskStatus = taskStatusService.updateTaskStatus(taskStatusRequestDto, Long.parseLong(id));
         if (taskStatus != null) {
             TaskStatusResponseDto taskStatusResponseDto = taskStatusService.entityToResponseDto(taskStatus);
             return ResponseEntity.ok(taskStatusResponseDto);
@@ -94,7 +94,7 @@ public class TaskStatusRestController {
     })
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteTaskStatus(@PathVariable("id") String id) {
-        taskStatusService.deleteTaskStatus(Integer.parseInt(id));
+        taskStatusService.deleteTaskStatus(Long.parseLong(id));
         return ResponseEntity.ok("Task status successfully deleted");
     }
 
