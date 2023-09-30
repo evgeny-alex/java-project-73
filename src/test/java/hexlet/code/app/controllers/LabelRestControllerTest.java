@@ -153,5 +153,6 @@ public class LabelRestControllerTest {
         assertEquals(countLabelsBeforeDelete - 1, countLabelsAfterDelete);
     }
 
-    // TODO: 17.05.2023 1. Исправить прохождение тестов 2. Исправить работу Rollbar 3. Исправить все предупреждения checkStyle
+    // TODO: 17.05.2023 0. решить проблему с MockHttpServletRequest does not implement the requested interface javax.servlet.http.HttpServletRequest
+    //  1. Исправить прохождение тестов 2. Исправить работу Rollbar 3. Исправить все предупреждения checkStyle
 }
